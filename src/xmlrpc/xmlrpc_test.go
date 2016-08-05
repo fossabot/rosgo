@@ -619,6 +619,7 @@ func TestParseFault(t *testing.T) {
 }
 
 func TestClient(t *testing.T) {
+	t.Skip("FIXME: need to use httptest instead of requiring actual ROS_MASTER_URI")
 	masterUri := os.Getenv("ROS_MASTER_URI")
 	t.Log(masterUri)
 
