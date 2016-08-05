@@ -93,30 +93,30 @@ func (c *defaultServiceClient) Call(srv Service) error {
 	reqMsg := buf.Bytes()
 	size := uint32(len(reqMsg))
 	conn.SetDeadline(time.Now().Add(10 * time.Millisecond))
-	if err := binary.Write(conn, binary.LittleEndian, size); err != nil {
+	if err = binary.Write(conn, binary.LittleEndian, size); err != nil {
 		return err
 	}
 	logger.Debug(len(reqMsg))
 	conn.SetDeadline(time.Now().Add(10 * time.Millisecond))
-	if _, writeErr := conn.Write(reqMsg); writeErr != nil {
-		return writeErr
+	if _, err = conn.Write(reqMsg); err != nil {
+		return err
 	}
 
 	// 4. Read OK byte
 	var ok byte
 	conn.SetDeadline(time.Now().Add(10 * time.Millisecond))
-	if err := binary.Read(conn, binary.LittleEndian, &ok); err != nil {
+	if err = binary.Read(conn, binary.LittleEndian, &ok); err != nil {
 		return err
 	} else {
 		if ok == 0 {
 			var size uint32
 			conn.SetDeadline(time.Now().Add(10 * time.Millisecond))
-			if err := binary.Read(conn, binary.LittleEndian, &size); err != nil {
+			if err = binary.Read(conn, binary.LittleEndian, &size); err != nil {
 				return err
 			} else {
 				errMsg := make([]byte, int(size))
 				conn.SetDeadline(time.Now().Add(10 * time.Millisecond))
-				if _, err := io.ReadFull(conn, errMsg); err != nil {
+				if _, err = io.ReadFull(conn, errMsg); err != nil {
 					return err
 				} else {
 					return errors.New(string(errMsg))
@@ -129,7 +129,7 @@ func (c *defaultServiceClient) Call(srv Service) error {
 	conn.SetDeadline(time.Now().Add(10 * time.Millisecond))
 	//logger.Debug("Reading message size...")
 	var msgSize uint32
-	if err := binary.Read(conn, binary.LittleEndian, &msgSize); err != nil {
+	if err = binary.Read(conn, binary.LittleEndian, &msgSize); err != nil {
 		return err
 	}
 	logger.Debugf("  %d", msgSize)
@@ -139,7 +139,7 @@ func (c *defaultServiceClient) Call(srv Service) error {
 		return err
 	}
 	resReader := bytes.NewReader(resBuffer)
-	if err := srv.ResMessage().Deserialize(resReader); err != nil {
+	if err = srv.ResMessage().Deserialize(resReader); err != nil {
 		return err
 	}
 	return nil

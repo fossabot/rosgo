@@ -212,7 +212,7 @@ func (s *remoteClientSession) start() {
 		logger.Debugf("  `%s` = `%s`", h.key, h.value)
 	}
 	conn.SetDeadline(time.Now().Add(10 * time.Millisecond))
-	if err := writeConnectionHeader(headers, conn); err != nil {
+	if err = writeConnectionHeader(headers, conn); err != nil {
 		panic(err)
 	}
 
@@ -220,7 +220,7 @@ func (s *remoteClientSession) start() {
 	logger.Debug("Reading message size...")
 	var msgSize uint32
 	conn.SetDeadline(time.Now().Add(10 * time.Millisecond))
-	if err := binary.Read(conn, binary.LittleEndian, &msgSize); err != nil {
+	if err = binary.Read(conn, binary.LittleEndian, &msgSize); err != nil {
 		panic(err)
 	}
 	logger.Debugf("  %d", msgSize)
@@ -234,7 +234,7 @@ func (s *remoteClientSession) start() {
 	s.server.node.jobChan <- func() {
 		srv := s.server.srvType.NewService()
 		reader := bytes.NewReader(resBuffer)
-		err := srv.ReqMessage().Deserialize(reader)
+		err = srv.ReqMessage().Deserialize(reader)
 		if err != nil {
 			s.errorChan <- err
 		}
@@ -269,36 +269,36 @@ func (s *remoteClientSession) start() {
 		// 4. Write OK byte
 		var ok byte = 1
 		conn.SetDeadline(time.Now().Add(10 * time.Millisecond))
-		if err := binary.Write(conn, binary.LittleEndian, &ok); err != nil {
+		if err = binary.Write(conn, binary.LittleEndian, &ok); err != nil {
 			panic(err)
 		}
 		// 5. Write response
 		logger.Debug(len(resMsg))
 		size := uint32(len(resMsg))
 		conn.SetDeadline(time.Now().Add(10 * time.Millisecond))
-		if err := binary.Write(conn, binary.LittleEndian, size); err != nil {
+		if err = binary.Write(conn, binary.LittleEndian, size); err != nil {
 			panic(err)
 		}
 		conn.SetDeadline(time.Now().Add(10 * time.Millisecond))
-		if _, err := conn.Write(resMsg); err != nil {
+		if _, err = conn.Write(resMsg); err != nil {
 			panic(err)
 		}
-	case err := <-s.errorChan:
+	case err = <-s.errorChan:
 		logger.Error(err)
 		// 4. Write OK byte
 		var ok byte = 0
 		conn.SetDeadline(time.Now().Add(10 * time.Millisecond))
-		if err := binary.Write(conn, binary.LittleEndian, &ok); err != nil {
+		if err = binary.Write(conn, binary.LittleEndian, &ok); err != nil {
 			panic(err)
 		}
 		errMsg := err.Error()
 		size := uint32(len(errMsg))
 		conn.SetDeadline(time.Now().Add(10 * time.Millisecond))
-		if err := binary.Write(conn, binary.LittleEndian, size); err != nil {
+		if err = binary.Write(conn, binary.LittleEndian, size); err != nil {
 			panic(err)
 		}
 		conn.SetDeadline(time.Now().Add(10 * time.Millisecond))
-		if _, err := conn.Write([]byte(errMsg)); err != nil {
+		if _, err = conn.Write([]byte(errMsg)); err != nil {
 			panic(err)
 		}
 	case <-timeoutChan:
