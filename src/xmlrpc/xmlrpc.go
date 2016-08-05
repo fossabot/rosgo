@@ -6,9 +6,9 @@ import (
 	"encoding/xml"
 	"errors"
 	"fmt"
-//	"io"
+	//	"io"
 	"net/http"
-//	"os"
+	//	"os"
 	"reflect"
 	"strconv"
 	"strings"
@@ -153,7 +153,6 @@ func nextTag(d *xml.Decoder) (xml.StartElement, error) {
 			return elem, nil
 		}
 	}
-	panic("not reached")
 }
 
 func expectNextTag(d *xml.Decoder, name string) (xml.StartElement, error) {
@@ -309,7 +308,6 @@ func parseValue(d *xml.Decoder) (interface{}, error) {
 					}
 				}
 			}
-			return nil, errors.New("Not reached")
 		case "struct":
 			m := make(map[string]interface{})
 			var name string
@@ -352,7 +350,6 @@ func parseValue(d *xml.Decoder) (interface{}, error) {
 					}
 				}
 			}
-			return nil, errors.New("Not reached")
 		default:
 			return nil, errors.New("Not supported: t.Name.Local = " + t.Name.Local)
 		}
@@ -418,8 +415,6 @@ func parseRequest(d *xml.Decoder) (name string, args []interface{}, e error) {
 			}
 		}
 	}
-	e = errors.New("Missing end element.")
-	return
 }
 
 func parseResponse(d *xml.Decoder) (ok bool, result interface{}, e error) {
@@ -517,7 +512,6 @@ func Call(url string, method string, args ...interface{}) (res interface{}, e er
 		e = errors.New("Malformed XMLRPC Fault Response")
 		return
 	}
-	panic("Not reached")
 }
 
 //type Method func (args ...interface{}) (interface{}, error)

@@ -104,7 +104,7 @@ func (s *defaultServiceServer) start() {
 		timeoutChan := time.After(1 * time.Millisecond)
 		select {
 		case err := <-s.sessionErrorChan:
-			logger.Error("session error: %v", err)
+			logger.Errorf("session error: %v", err)
 			if sessionError, ok := err.(*remoteClientSessionError); ok {
 				for e := s.sessions.Front(); e != nil; e = e.Next() {
 					if e.Value == sessionError.session {
@@ -182,8 +182,8 @@ func (s *remoteClientSession) start() {
 
 	// 1. Read request header
 	conn.SetDeadline(time.Now().Add(10 * time.Millisecond))
-	if resHeaders, err := readConnectionHeader(conn); err != nil {
-		panic(err)
+	if resHeaders, readErr := readConnectionHeader(conn); readErr != nil {
+		panic(readErr)
 	} else {
 		logger.Debug("TCPROS Connection Header:")
 		resHeaderMap := make(map[string]string)

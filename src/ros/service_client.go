@@ -72,8 +72,8 @@ func (c *defaultServiceClient) Call(srv Service) error {
 
 	// 2. Read reponse header
 	conn.SetDeadline(time.Now().Add(10 * time.Millisecond))
-	if resHeaders, err := readConnectionHeader(conn); err != nil {
-		return err
+	if resHeaders, readErr := readConnectionHeader(conn); readErr != nil {
+		return readErr
 	} else {
 		logger.Debug("TCPROS Response Header:")
 		resHeaderMap := make(map[string]string)
@@ -98,8 +98,8 @@ func (c *defaultServiceClient) Call(srv Service) error {
 	}
 	logger.Debug(len(reqMsg))
 	conn.SetDeadline(time.Now().Add(10 * time.Millisecond))
-	if _, err := conn.Write(reqMsg); err != nil {
-		return err
+	if _, writeErr := conn.Write(reqMsg); writeErr != nil {
+		return writeErr
 	}
 
 	// 4. Read OK byte

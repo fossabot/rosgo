@@ -409,27 +409,27 @@ func TestParseStruct(t *testing.T) {
 	}
 	x, ok := value.(map[string]interface{})
 	if !ok {
-		t.Error(ok)
+		t.Error("parsed value not a map[string]interface{}")
 	}
 	if len(x) != 2 {
-		t.Error()
+		t.Errorf("parsed value unexpected keys; expected=%d, got=%d", 2, len(x))
 	}
 
 	var i int32
 	i, ok = x["lowerBound"].(int32)
 	if !ok {
-		t.Error(ok)
+		t.Error("lowerBound not int32")
 	}
 	if i != 18 {
-		t.Error(i)
+		t.Errorf("lowerBound: expected=%d, got=%d", 18, i)
 	}
 
 	i, ok = x["upperBound"].(int32)
 	if !ok {
-		t.Error(ok)
+		t.Error("upperBound not int32")
 	}
 	if i != 139 {
-		t.Error(i)
+		t.Errorf("upperBound: expected=%d, got=%d", 18, i)
 	}
 }
 
@@ -660,7 +660,6 @@ func TestServer(t *testing.T) {
 	listener, err := net.Listen("tcp", ":19937")
 	if err != nil {
 		panic(err)
-		return
 	}
 	d := myDispatcher{2}
 	m := map[string]Method{"addTwoInts": d.addTwoInts}
