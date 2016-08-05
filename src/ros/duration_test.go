@@ -44,12 +44,12 @@ func TestDurationSub(t *testing.T) {
 }
 
 func TestDurationSleep(t *testing.T) {
-	d := NewDuration(1, 100000000)
+	d := NewDuration(1, 100*1000*1000)
 	start := time.Now().UnixNano()
 	d.Sleep()
 	end := time.Now().UnixNano()
-	// The jitter tolerance (5msec) doesn't have strong basis.
-	const Tolerance int64 = 5000000
+	// The jitter tolerance (10msec) doesn't have strong basis.
+	const Tolerance int64 = 10 * 1000 * 1000
 	elapsed := end - start
 	delta := elapsed - int64(d.ToNSec())
 	if delta < 0 {

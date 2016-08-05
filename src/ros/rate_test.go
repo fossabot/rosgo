@@ -58,9 +58,9 @@ func TestRateReset(t *testing.T) {
 }
 
 func TestRateSleep(t *testing.T) {
-	// The jitter tolerance (5msec) doesn't have strong basis.
-	const JitterTolerance int64 = 5000000
-	ct := NewDuration(0, 100000000) // 10msec
+	// The jitter tolerance (10msec) doesn't have strong basis.
+	const JitterTolerance int64 = 10 * 1000 * 1000
+	ct := NewDuration(0, 100*1000*1000) // 10msec
 	r := CycleTime(ct)
 	if ct.Cmp(r.ExpectedCycleTime()) != 0 {
 		t.Fail()
