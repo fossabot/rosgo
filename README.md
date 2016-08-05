@@ -1,5 +1,5 @@
-rosgo
-============================================================================
+# rosgo
+[![Build Status](https://travis-ci.org/ppg/rosgo.svg?branch=master)](https://travis-ci.org/ppg/rosgo)
 
 Package Summary
 ---------------------------------

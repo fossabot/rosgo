@@ -5,15 +5,12 @@ go:
   - 1.6.3
 
 before_install:
-  - go get golang.org/x/tools/cmd/goimports
   - go get github.com/golang/lint/golint
 #  - go get github.com/axw/gocov/gocov
 #  - go get github.com/mattn/goveralls
 #  - go get golang.org/x/tools/cmd/cover
 
 script:
-  - '! gofmt -s -d -l . 2>&1 | read'
-  - '! goimports -l . | read'
-  - '! golint ./... | grep -vE "(_string|\.pb)\.go:"'
-  - '! go tool vet -all . 2>&1'
-  - '! go test -v ./...'
+  - 'golint ./...'
+  - 'go tool vet -test .'
+  - 'go test -v -race ./...'
