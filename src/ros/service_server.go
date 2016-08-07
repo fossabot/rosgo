@@ -255,7 +255,8 @@ func (s *remoteClientSession) start() {
 			s.responseChan <- buf.Bytes()
 		} else {
 			logger.Debug("Service callback failure")
-			if err, ok := result.Interface().(error); ok {
+			var ok bool
+			if err, ok = result.Interface().(error); ok {
 				s.errorChan <- err
 			} else {
 				s.errorChan <- fmt.Errorf("Service handler has invalid signature")

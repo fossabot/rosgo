@@ -66,7 +66,7 @@ func (c *defaultServiceClient) Call(srv Service) error {
 		logger.Debugf("  `%s` = `%s`", h.key, h.value)
 	}
 	conn.SetDeadline(time.Now().Add(10 * time.Millisecond))
-	if err := writeConnectionHeader(headers, conn); err != nil {
+	if err = writeConnectionHeader(headers, conn); err != nil {
 		return err
 	}
 
