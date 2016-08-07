@@ -3,6 +3,18 @@
 // DO NOT EDIT!
 package {{ .PackageName }}
 
+import (
+	"bytes"
+	{{- if or .HasBuiltIn .HasSlice .HasArray }}
+	"encoding/binary"
+	{{- end }}
+	{{- if .HasArray }}
+	"fmt"
+	{{- end }}
+
+	"github.com/ppg/rosgo/ros"
+)
+
 type _Msg{{ .Name }} struct {
 	text string
 	name string
@@ -84,6 +96,7 @@ func (m *{{ .Name }}) Serialize(buf *bytes.Buffer) (err error) {
 {{- define "deserialize" }}
 	{{- if .BuiltIn }}
 	{{- if eq .TypeName "string" }}
+	{
 	var size uint32
 	if err = binary.Read(buf, binary.LittleEndian, &size); err != nil {
 		return err
@@ -93,6 +106,7 @@ func (m *{{ .Name }}) Serialize(buf *bytes.Buffer) (err error) {
 		return err
 	}
 	{{ .LoopVar }} = string(data)
+	}
 
 	{{- else if eq .TypeName "time" "duration" }}
 	if err = binary.Read(buf, binary.LittleEndian, &{{ .LoopVar }}.Sec); err != nil {
@@ -115,17 +129,18 @@ func (m *{{ .Name }}) Serialize(buf *bytes.Buffer) (err error) {
 	{{- end }}
 {{- end }}
 
-func (m *String) Deserialize(buf *bytes.Reader) (err error) {
+func (m *{{ .Name }}) Deserialize(buf *bytes.Reader) (err error) {
 	{{- range .Fields }}
 	// {{ .Name }}
 	{{- if .IsArray }}
+	{
 	var size uint32
 	if err = binary.Read(buf, binary.LittleEndian, &size); err != nil {
 		return err
 	}
 	{{- if gt .ArraySize 0 }}
 	if size > {{ .ArraySize }} {
-	  return fmt.Errorf("array size for {{ .Name }} too large: expected={{ .ArraySize }}, got=%d", size)
+		return fmt.Errorf("array size for {{ .Name }} too large: expected={{ .ArraySize }}, got=%d", size)
 	}
 	{{- else }}
 	m.{{ .Name }} = make([]{{ .GoTypeName }}, int(size))
@@ -133,6 +148,8 @@ func (m *String) Deserialize(buf *bytes.Reader) (err error) {
 	for i := 0; i < int(size); i++ {
 		{{- template "deserialize" setloopvar . (printf "m.%s[i]" .Name) }}
 	}
+	}
+
 	{{- else }}
 	{{- template "deserialize" setloopvar . (printf "m.%s" .Name) }}
 	{{- end }}

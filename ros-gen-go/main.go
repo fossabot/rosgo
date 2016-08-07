@@ -135,6 +135,9 @@ type msgSpec struct {
 	Name        string
 	Fields      []*msgField
 	Constants   []*msgConstant
+	HasBuiltIn  bool
+	HasSlice    bool
+	HasArray    bool
 }
 
 var constMatcher = regexp.MustCompile(`^\s*([\w/]+)\s+(\w+)\s*=\s*(\d+)#?.*`)
@@ -177,6 +180,15 @@ func parseMsgSpec(infile string) (interface{}, error) {
 			//log.Println(line)
 			//log.Printf("items(%d): %+v", len(items), items)
 			field := newMsgField(items[4], items[1], len(items[2]) > 0, items[3])
+			if field.BuiltIn {
+				spec.HasBuiltIn = true
+			}
+			if field.IsArray {
+				spec.HasSlice = true
+				if field.ArraySize > 0 {
+					spec.HasArray = true
+				}
+			}
 			//log.Printf("field: %+v", field)
 			spec.Fields = append(spec.Fields, field)
 			continue
