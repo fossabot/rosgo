@@ -5,10 +5,15 @@ import (
 	"bytes"
 	"crypto/md5"
 	"fmt"
+	"go/parser"
+	"go/printer"
+	"go/token"
 	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
+	"regexp"
+	"strconv"
 	"strings"
 	"text/template"
 	"unicode"
@@ -20,9 +25,14 @@ var (
 	infile      string
 	outfile     string
 	packageName string
+	dryRun      bool
 )
 
 //go:generate go-bindata -o tmpl.go msg.tmpl
+
+type loopVarSetter interface {
+	SetLoopVar(interface{})
+}
 
 func main() {
 	log.SetFlags(0)
@@ -30,6 +40,7 @@ func main() {
 	flag.StringVarP(&infile, "in", "i", "", "input file")
 	flag.StringVarP(&outfile, "out", "o", "", "output file; defaults to '<input file>.go'")
 	flag.StringVarP(&packageName, "package", "p", "msgs", "package name for generated file")
+	flag.BoolVar(&dryRun, "dry-run", false, "output the file that would be generated to stdout")
 	flag.Parse()
 
 	if flag.NArg() < 1 {
@@ -40,7 +51,13 @@ func main() {
 	templateType := flag.Arg(0)
 	basename := fmt.Sprintf("%s.tmpl", templateType)
 	tmpl := template.New(basename)
-	//tmpl = tmpl.Funcs(map[string]interface{}{})
+	tmpl = tmpl.Funcs(map[string]interface{}{
+		// HACK(ppg): Allow setting a loop variable a struct so we can use it
+		"setloopvar": func(setter loopVarSetter, value interface{}) interface{} {
+			setter.SetLoopVar(value)
+			return setter
+		},
+	})
 	data, err := Asset(basename)
 	if err != nil {
 		log.Printf("unrecognized generator template: %s (%s)", templateType, err)
@@ -68,22 +85,42 @@ func main() {
 		outfile = infile + ".go"
 	}
 
-	parser, ok := parsers[templateType]
+	typeParser, ok := parsers[templateType]
 	if !ok {
 		log.Fatalf("no parser configured: %s", templateType)
 	}
-	spec, err := parser(infile)
+	spec, err := typeParser(infile)
 	if err != nil {
-		log.Fatalf("failed to parse %s spec: %s", templateType, err)
+		log.Fatalf("failed to parse %s spec %s: %s", templateType, infile, err)
 	}
 
 	buf := bytes.NewBuffer([]byte{})
 	err = tmpl.Execute(buf, spec)
 	if err != nil {
-		log.Fatalf("failed to generate go file: %s", err)
+		log.Fatalf("failed to generate Go file: %s", err)
 	}
 
-	fmt.Println(buf.String())
+	fset := token.NewFileSet()
+	ast, err := parser.ParseFile(fset, "", buf.Bytes(), parser.ParseComments)
+	if err != nil {
+		log.Fatalf("bad Go source code was generated: %s\n%s", err, buf.String())
+	}
+	buf.Reset()
+	err = (&printer.Config{Mode: printer.TabIndent | printer.UseSpaces, Tabwidth: 8}).Fprint(buf, fset, ast)
+	if err != nil {
+		log.Fatalf("generated Go source code could not be reformatted: %s", err)
+	}
+
+	if dryRun {
+		fmt.Println(buf.String())
+		return
+	}
+
+	err = ioutil.WriteFile(outfile, buf.Bytes(), 0644)
+	if err != nil {
+		log.Fatalf("failed to write go file: %s", err)
+	}
+	log.Printf("Wrote %s from %s", outfile, infile)
 }
 
 var parsers = map[string]func(infile string) (interface{}, error){
@@ -96,9 +133,15 @@ type msgSpec struct {
 	PackageName string
 	MD5Sum      string
 	Name        string
-	Fields      []msgField
+	Fields      []*msgField
+	Constants   []*msgConstant
 }
 
+var constMatcher = regexp.MustCompile(`^\s*([\w/]+)\s+(\w+)\s*=\s*(\d+)#?.*`)
+var fieldMatcher = regexp.MustCompile(`^\s*([\w/]+)(\[(\d+)?\])?\s+(\w+)#?.*`)
+
+//uint8 status
+//uint8 PENDING         = 0   # The goal has yet to be processed by the action server
 func parseMsgSpec(infile string) (interface{}, error) {
 	data, err := ioutil.ReadFile(infile)
 	if err != nil {
@@ -118,19 +161,30 @@ func parseMsgSpec(infile string) (interface{}, error) {
 	scanner := bufio.NewScanner(buf)
 	for scanner.Scan() {
 		line := scanner.Text()
-
-		// Clean up the line and skip anything prefixed as comment
 		line = strings.TrimSpace(line)
-		if strings.HasPrefix(line, "#") {
+
+		// Check constant first
+		items := constMatcher.FindStringSubmatch(line)
+		if items != nil {
+			constant := newMsgConstant(items[2], items[1], items[3])
+			spec.Constants = append(spec.Constants, constant)
 			continue
 		}
 
-		// Extract <type> <name> and create field specs
-		items := strings.Split(line, " ")
-		if len(items) != 2 {
+		// Now check field
+		items = fieldMatcher.FindStringSubmatch(line)
+		if items != nil {
+			//log.Println(line)
+			//log.Printf("items(%d): %+v", len(items), items)
+			field := newMsgField(items[4], items[1], len(items[2]) > 0, items[3])
+			//log.Printf("field: %+v", field)
+			spec.Fields = append(spec.Fields, field)
+			continue
+		}
+
+		if len(line) != 0 && !strings.HasPrefix(line, "#") {
 			return nil, fmt.Errorf("unrecognized msg line: %s", line)
 		}
-		spec.Fields = append(spec.Fields, newMsgField(items[1], items[0]))
 	}
 
 	if err := scanner.Err(); err != nil {
@@ -141,23 +195,35 @@ func parseMsgSpec(infile string) (interface{}, error) {
 }
 
 type msgField struct {
+	IsArray     bool
+	ArraySize   int
 	Name        string
 	TypeName    string
-	Info        goInfo
 	BuiltIn     bool
 	GoTypeName  string
 	GoZeroValue string
+
+	LoopVar interface{}
 }
 
-type goInfo struct {
-	TypeName  string
-	ZeroValue string
+func (m *msgField) SetLoopVar(i interface{}) {
+	m.LoopVar = i
 }
 
-// TODO(ppg): Handle arrays perhaps
-func newMsgField(name, typeName string) (field msgField) {
+func newMsgField(name, typeName string, isArray bool, arraySize string) (field *msgField) {
+	//log.Printf("name: %s", name)
+	//log.Printf("typeName: %s", typeName)
+	field = new(msgField)
 	field.Name = snakeToCamel(name)
 	field.TypeName = typeName
+	field.IsArray = isArray
+	if isArray && len(arraySize) > 0 {
+		var err error
+		field.ArraySize, err = strconv.Atoi(arraySize)
+		if err != nil {
+			panic(err)
+		}
+	}
 
 	// Try to get field info from built-in first
 	info, ok := builtInInfo[typeName]
@@ -174,25 +240,44 @@ func newMsgField(name, typeName string) (field msgField) {
 	// TODO(ppg): Can we set all complex types to nil instead?
 
 	// Split on / for namespaced messages
-	items := strings.Split(name, "/")
-	goMessageName := items[0]
+	items := strings.Split(typeName, "/")
+	goMessageTypeName := snakeToCamel(items[0])
 
 	// If we have a namespace adjust goMessageName
 	if len(items) == 2 {
 		goPackageName := items[0]
-		goMessageName = items[1]
+		goMessageTypeName = snakeToCamel(items[1])
 		// if its not our package then prefix and return
 		if goPackageName != packageName {
-			field.GoTypeName = fmt.Sprintf("%s.%s", goPackageName, goMessageName)
-			field.GoZeroValue = fmt.Sprintf("%s.%s{}", goPackageName, goMessageName)
+			field.GoTypeName = fmt.Sprintf("%s.%s", goPackageName, goMessageTypeName)
+			field.GoZeroValue = fmt.Sprintf("%s.%s{}", goPackageName, goMessageTypeName)
 			return
 		}
 	}
 
 	// Returned non-namespaced
-	field.GoTypeName = fmt.Sprintf("%s", goMessageName)
-	field.GoZeroValue = fmt.Sprintf("%s{}", goMessageName)
+	field.GoTypeName = fmt.Sprintf("%s", goMessageTypeName)
+	field.GoZeroValue = fmt.Sprintf("%s{}", goMessageTypeName)
 	return
+}
+
+type msgConstant struct {
+	Name     string
+	TypeName string
+	Value    string
+}
+
+func newMsgConstant(name, typeName, value string) (constant *msgConstant) {
+	constant = new(msgConstant)
+	constant.Name = snakeToCamel(name)
+	constant.TypeName = typeName
+	constant.Value = value
+	return
+}
+
+type goInfo struct {
+	TypeName  string
+	ZeroValue string
 }
 
 var builtInInfo = map[string]goInfo{
