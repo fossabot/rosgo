@@ -1,7 +1,7 @@
 package ros
 
 import (
-	gotime "time"
+	"time"
 )
 
 type Time struct {
@@ -15,7 +15,7 @@ func NewTime(sec uint32, nsec uint32) Time {
 
 func Now() Time {
 	var t Time
-	t.FromNSec(uint64(gotime.Now().UnixNano()))
+	t.FromNSec(uint64(time.Now().UnixNano()))
 	return t
 }
 

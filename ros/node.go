@@ -12,7 +12,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/ppg/rosgo/src/xmlrpc"
+	"github.com/ppg/rosgo/xmlrpc"
 )
 
 const (
