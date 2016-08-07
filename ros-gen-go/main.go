@@ -22,6 +22,8 @@ var (
 	packageName string
 )
 
+//go:generate go-bindata -o tmpl.go msg.tmpl
+
 func main() {
 	log.SetFlags(0)
 
@@ -36,16 +38,18 @@ func main() {
 		os.Exit(1)
 	}
 	templateType := flag.Arg(0)
-	// TODO(ppg): Need to embed templates so they don't need to be brought along
 	basename := fmt.Sprintf("%s.tmpl", templateType)
 	tmpl := template.New(basename)
-	tmpl = tmpl.Funcs(map[string]interface{}{
-	//"titleize": snakeToCamel,
-	})
-	tmpl, err := tmpl.ParseFiles("ros-gen-go/" + basename)
+	//tmpl = tmpl.Funcs(map[string]interface{}{})
+	data, err := Asset(basename)
 	if err != nil {
 		log.Printf("unrecognized generator template: %s (%s)", templateType, err)
 		flag.PrintDefaults()
+		os.Exit(1)
+	}
+	tmpl, err = tmpl.Parse(string(data))
+	if err != nil {
+		log.Printf("unable to template %s: %s", templateType, err)
 		os.Exit(1)
 	}
 
