@@ -2,7 +2,7 @@ byte FOO=1
 byte BAR=2
 string HOGE=hoge
 
-#Header h
+Header h
 byte b
 int8 i8
 int16 i16
@@ -17,7 +17,7 @@ float64 f64
 time t
 duration d
 string s
-#std_msgs/ColorRGBA c
+std_msgs/ColorRGBA c
 uint32[] dyn_ary
 uint32[2] fix_ary
 #std_msgs/ColorRGBA[] msg_ary

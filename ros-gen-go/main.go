@@ -129,10 +129,12 @@ var parsers = map[string]func(infile string) (interface{}, error){
 
 type msgSpec struct {
 	InFile      string
+	InFileBase  string
 	Raw         string
 	PackageName string
 	MD5Sum      string
 	Name        string
+	packageMap  map[string]struct{}
 	Fields      []*msgField
 	Constants   []*msgConstant
 	HasBuiltIn  bool
@@ -140,8 +142,29 @@ type msgSpec struct {
 	HasArray    bool
 }
 
-var constMatcher = regexp.MustCompile(`^\s*([\w/]+)\s+(\w+)\s*=\s*(\d+)#?.*`)
-var fieldMatcher = regexp.MustCompile(`^\s*([\w/]+)(\[(\d+)?\])?\s+(\w+)#?.*`)
+func (m msgSpec) Packages() (ret []string) {
+	ret = make([]string, 0, len(m.packageMap))
+	for k := range m.packageMap {
+		ret = append(ret, k)
+	}
+	return
+}
+
+//byte FOO=1
+//byte BAR=2
+//string HOGE=hoge
+var constMatcher = regexp.MustCompile(`^([\w/]+)\s+(\w+)\s*=\s*(\w+)`)
+
+//Header h # go:package=github.com/ppg/rosgo/msgs/std_msgs
+//byte b
+//std_msgs/ColorRGBA c
+//uint32[] dyn_ary
+//uint32[2] fix_ary
+//std_msgs/ColorRGBA[] msg_ary
+var fieldMatcher = regexp.MustCompile(`^([\w/]+)(\[(\d*)\])?\s+(\w+)`)
+
+// go:package=github.com/ppg/rosgo/msgs/std_msgs
+var goOptionMatcher = regexp.MustCompile(`go:(\w+)=([^\s]+)`)
 
 //uint8 status
 //uint8 PENDING         = 0   # The goal has yet to be processed by the action server
@@ -156,8 +179,10 @@ func parseMsgSpec(infile string) (interface{}, error) {
 	basename := filepath.Base(infile)
 	spec.Name = strings.TrimSuffix(basename, filepath.Ext(basename))
 	spec.InFile = infile
+	spec.InFileBase = filepath.Base(infile)
 	spec.Raw = string(data)
 	spec.MD5Sum = fmt.Sprintf("%x", md5.Sum(data))
+	spec.packageMap = make(map[string]struct{})
 
 	// Read the data line by line
 	buf := bytes.NewBuffer(data)
@@ -169,7 +194,21 @@ func parseMsgSpec(infile string) (interface{}, error) {
 		// Check constant first
 		items := constMatcher.FindStringSubmatch(line)
 		if items != nil {
-			constant := newMsgConstant(items[2], items[1], items[3])
+			//log.Println("constant", line)
+			//log.Printf("items(%d): %+v", len(items), items)
+			//for i := 0; i < len(items); i++ {
+			//	log.Printf("items[%d]: %+v", i, items[i])
+			//}
+			//items(4): [string HOGE=hoge string HOGE hoge]
+			//items[0]: string HOGE=hoge
+			//items[1]: string
+			//items[2]: HOGE
+			//items[3]: hoge
+			rosName := items[2]
+			rosType := items[1]
+			rosValue := items[3]
+			constant := newMsgConstant(rosName, rosType, rosValue)
+			//log.Printf("constant: %+v", constant)
 			spec.Constants = append(spec.Constants, constant)
 			continue
 		}
@@ -177,9 +216,28 @@ func parseMsgSpec(infile string) (interface{}, error) {
 		// Now check field
 		items = fieldMatcher.FindStringSubmatch(line)
 		if items != nil {
-			//log.Println(line)
+			//log.Println("field", line)
 			//log.Printf("items(%d): %+v", len(items), items)
-			field := newMsgField(items[4], items[1], len(items[2]) > 0, items[3])
+			//for i := 0; i < len(items); i++ {
+			//	log.Printf("items[%d]: %+v", i, items[i])
+			//}
+			// Parse go options
+			goOptions := make(map[string]string)
+			for _, option := range goOptionMatcher.FindAllStringSubmatch(line, -1) {
+				goOptions[option[1]] = option[2]
+			}
+			//log.Println("goOptions", goOptions)
+			//items(5): [uint32[2] fix_ary uint32 [2] 2 fix_ary]
+			//items[0]: uint32[2] fix_ary
+			//items[1]: uint32
+			//items[2]: [2]
+			//items[3]: 2
+			//items[4]: fix_ary
+			rosName := items[4]
+			rosType := items[1]
+			isSliceOrArray := len(items[2]) > 0
+			arraySize := items[3]
+			field := newMsgField(rosName, rosType, isSliceOrArray, arraySize)
 			if field.BuiltIn {
 				spec.HasBuiltIn = true
 			}
@@ -187,6 +245,15 @@ func parseMsgSpec(infile string) (interface{}, error) {
 				spec.HasSlice = true
 				if field.ArraySize > 0 {
 					spec.HasArray = true
+				}
+			}
+			if field.GoImportName != "" {
+				if pkg, ok := goOptions["package"]; ok {
+					spec.packageMap[pkg] = struct{}{}
+				} else if pkg, ok := builtInImports[field.GoImportName]; ok {
+					spec.packageMap[pkg] = struct{}{}
+				} else {
+					log.Printf("WARNING: go import name not found in go:package option nor built-in imports: %s", field.GoImportName)
 				}
 			}
 			//log.Printf("field: %+v", field)
@@ -207,13 +274,14 @@ func parseMsgSpec(infile string) (interface{}, error) {
 }
 
 type msgField struct {
-	IsArray     bool
-	ArraySize   int
-	Name        string
-	TypeName    string
-	BuiltIn     bool
-	GoTypeName  string
-	GoZeroValue string
+	IsArray      bool
+	ArraySize    int
+	Name         string
+	TypeName     string
+	BuiltIn      bool
+	GoImportName string
+	GoTypeName   string
+	GoZeroValue  string
 
 	LoopVar interface{}
 }
@@ -222,12 +290,12 @@ func (m *msgField) SetLoopVar(i interface{}) {
 	m.LoopVar = i
 }
 
-func newMsgField(name, typeName string, isArray bool, arraySize string) (field *msgField) {
-	//log.Printf("name: %s", name)
-	//log.Printf("typeName: %s", typeName)
+func newMsgField(rosName, rosType string, isArray bool, arraySize string) (field *msgField) {
+	//log.Printf("rosName: %s", rosName)
+	//log.Printf("rosType: %s", rosType)
 	field = new(msgField)
-	field.Name = snakeToCamel(name)
-	field.TypeName = typeName
+	field.Name = snakeToCamel(rosName)
+	field.TypeName = rosType
 	field.IsArray = isArray
 	if isArray && len(arraySize) > 0 {
 		var err error
@@ -238,9 +306,10 @@ func newMsgField(name, typeName string, isArray bool, arraySize string) (field *
 	}
 
 	// Try to get field info from built-in first
-	info, ok := builtInInfo[typeName]
+	info, ok := builtInInfo[rosType]
 	if ok {
 		field.BuiltIn = true
+		field.GoImportName = ""
 		field.GoTypeName = info.TypeName
 		field.GoZeroValue = info.ZeroValue
 		return
@@ -251,18 +320,26 @@ func newMsgField(name, typeName string, isArray bool, arraySize string) (field *
 
 	// TODO(ppg): Can we set all complex types to nil instead?
 
+	// Special case Header per ROS docs
+	if rosType == "Header" {
+		field.GoImportName = "std_msgs"
+		field.GoTypeName = "std_msgs.Header"
+		field.GoZeroValue = "std_msgs.Header{}"
+		return
+	}
+
 	// Split on / for namespaced messages
-	items := strings.Split(typeName, "/")
+	items := strings.Split(rosType, "/")
 	goMessageTypeName := snakeToCamel(items[0])
 
 	// If we have a namespace adjust goMessageName
 	if len(items) == 2 {
-		goPackageName := items[0]
+		field.GoImportName = items[0]
 		goMessageTypeName = snakeToCamel(items[1])
 		// if its not our package then prefix and return
-		if goPackageName != packageName {
-			field.GoTypeName = fmt.Sprintf("%s.%s", goPackageName, goMessageTypeName)
-			field.GoZeroValue = fmt.Sprintf("%s.%s{}", goPackageName, goMessageTypeName)
+		if field.GoImportName != packageName {
+			field.GoTypeName = fmt.Sprintf("%s.%s", field.GoImportName, goMessageTypeName)
+			field.GoZeroValue = fmt.Sprintf("%s.%s{}", field.GoImportName, goMessageTypeName)
 			return
 		}
 	}
@@ -279,10 +356,10 @@ type msgConstant struct {
 	Value    string
 }
 
-func newMsgConstant(name, typeName, value string) (constant *msgConstant) {
+func newMsgConstant(rosName, rosType, value string) (constant *msgConstant) {
 	constant = new(msgConstant)
-	constant.Name = snakeToCamel(name)
-	constant.TypeName = typeName
+	constant.Name = snakeToCamel(rosName)
+	constant.TypeName = rosType
 	constant.Value = value
 	return
 }
@@ -311,6 +388,10 @@ var builtInInfo = map[string]goInfo{
 	"uint16": goInfo{"uint16", "0"},
 	"uint32": goInfo{"uint32", "0"},
 	"uint64": goInfo{"uint64", "0"},
+}
+
+var builtInImports = map[string]string{
+	"std_msgs": "github.com/ppg/rosgo/msgs/std_msgs",
 }
 
 // snakeToCamel returns a string converted from snake case to uppercase
