@@ -1,3 +1,5 @@
+.cover/
+
 ros-gen-go/ros-gen-go
 
 # Ignore example built files

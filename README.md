@@ -1,10 +1,11 @@
 # rosgo
 [![Build Status](https://travis-ci.org/ppg/rosgo.svg?branch=master)](https://travis-ci.org/ppg/rosgo)
+[![Coverage Status](https://coveralls.io/repos/github/ppg/rosgo/badge.svg?branch=coveralls)](https://coveralls.io/github/ppg/rosgo?branch=coveralls)
 
 Package Summary
 ---------------------------------
 
-**rosgo** is pure Go implementation of [ROS](http://www.ros.org/) client library. 
+**rosgo** is pure Go implementation of [ROS](http://www.ros.org/) client library.
 
 - Author: Akiyoshi Ochiai<akio7141 AT gmail DOT com>
 - License: Apache License 2.0
@@ -32,12 +33,12 @@ Setup environmet variable:
 Build rosgo library:
 
      go install ros
-     
+
 
 Examples programs:
 
      go install test_listener test_talker test_param
-     
+
 Example executables are placed in `bin` directory.
 
 
