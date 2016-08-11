@@ -46,10 +46,6 @@ type Hello struct {
 	Data string
 }
 
-func (m *Hello) Type() ros.MessageType {
-	return MsgHello
-}
-
 func (m *Hello) Serialize(w io.Writer) (err error) {
 	if err = ros.SerializeMessageField(w, "string", &m.Data); err != nil {
 		return err

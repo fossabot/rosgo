@@ -88,10 +88,6 @@ type AllFieldTypes struct {
 	FixAry [2]uint32
 }
 
-func (m *AllFieldTypes) Type() ros.MessageType {
-	return MsgAllFieldTypes
-}
-
 func (m *AllFieldTypes) Serialize(w io.Writer) (err error) {
 	if err = ros.SerializeMessageField(w, "Header", &m.H); err != nil {
 		return err

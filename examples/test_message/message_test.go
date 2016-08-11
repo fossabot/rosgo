@@ -10,9 +10,6 @@ import (
 	"github.com/ppg/rosgo/ros"
 )
 
-//go:generate ros-gen-go msg --in=../msg/AllFieldTypes.msg
-//go:generate ros-gen-go msg --in=../msg/Hello.msg
-
 func TestInitialize(t *testing.T) {
 	msg := example_msgs.AllFieldTypes{}
 	fmt.Println(msg)
