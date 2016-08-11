@@ -29,7 +29,7 @@ var (
 	dryRun      bool
 )
 
-//go:generate go-bindata -o tmpl.go msg.tmpl
+//go:generate go-bindata -o tmpl.go msg.partial.tmpl msg.tmpl srv.tmpl
 
 type loopVarSetter interface {
 	SetLoopVar(interface{})
@@ -40,7 +40,7 @@ func main() {
 
 	flag.StringVarP(&infile, "in", "i", "", "input file")
 	flag.StringVarP(&outfile, "out", "o", "", "output file; defaults to '<input file>.go'")
-	flag.StringVarP(&packageName, "package", "p", "msgs", "package name for generated file")
+	flag.StringVarP(&packageName, "package", "p", "", "package name for generated file; defaults to 'msgs' or 'srvs'")
 	flag.BoolVar(&dryRun, "dry-run", false, "output the file that would be generated to stdout")
 	flag.Parse()
 
@@ -50,7 +50,17 @@ func main() {
 		os.Exit(1)
 	}
 	templateType := flag.Arg(0)
+	if packageName == "" {
+		packageName = templateType + "s"
+	}
+
 	basename := fmt.Sprintf("%s.tmpl", templateType)
+	data, err := Asset(basename)
+	if err != nil {
+		log.Printf("unrecognized generator template: %s (%s)", templateType, err)
+		flag.PrintDefaults()
+		os.Exit(1)
+	}
 	tmpl := template.New(basename)
 	tmpl = tmpl.Funcs(map[string]interface{}{
 		// HACK(ppg): Allow setting a loop variable a struct so we can use it
@@ -59,13 +69,20 @@ func main() {
 			return setter
 		},
 	})
-	data, err := Asset(basename)
+	tmpl, err = tmpl.Parse(string(data))
+	if err != nil {
+		log.Printf("unable to template %s: %s", templateType, err)
+		os.Exit(1)
+	}
+
+	data, err = Asset("msg.partial.tmpl")
 	if err != nil {
 		log.Printf("unrecognized generator template: %s (%s)", templateType, err)
 		flag.PrintDefaults()
 		os.Exit(1)
 	}
-	tmpl, err = tmpl.Parse(string(data))
+	tmpl2 := tmpl.New("msg.partial.tmpl")
+	_, err = tmpl2.Parse(string(data))
 	if err != nil {
 		log.Printf("unable to template %s: %s", templateType, err)
 		os.Exit(1)
@@ -86,17 +103,44 @@ func main() {
 		outfile = infile + ".go"
 	}
 
-	typeParser, ok := parsers[templateType]
-	if !ok {
-		log.Fatalf("no parser configured: %s", templateType)
-	}
-	spec, err := typeParser(infile)
+	// Read input file
+	data, err = ioutil.ReadFile(infile)
 	if err != nil {
-		log.Fatalf("failed to parse %s spec %s: %s", templateType, infile, err)
+		log.Fatalf("failed to read infile %s: %s", infile, err)
+	}
+	basename = filepath.Base(infile)
+	fileInfo := FileInfo{
+		InFile:      infile,
+		InFileBase:  filepath.Base(infile),
+		Raw:         string(data),
+		MD5Sum:      fmt.Sprintf("%x", md5.Sum(data)),
+		PackageName: packageName,
+		Name:        strings.TrimSuffix(basename, filepath.Ext(basename)),
+	}
+
+	// Parse by type
+	var spec interface{}
+	switch templateType {
+	case "msg":
+		msgSpec, err := parseMsgSpec(fileInfo.PackageName, fileInfo.Name, data)
+		if err != nil {
+			log.Fatalf("failed to parse %s spec: %s", templateType, err)
+		}
+		spec = msgSpec
+
+	case "srv":
+		srvSpec, err := parseSrvSpec(fileInfo.PackageName, fileInfo.Name, data)
+		if err != nil {
+			log.Fatalf("failed to parse %s spec: %s", templateType, err)
+		}
+		spec = srvSpec
+
+	default:
+		log.Fatalf("no parser configured: %s", templateType)
 	}
 
 	buf := bytes.NewBuffer([]byte{})
-	err = tmpl.Execute(buf, spec)
+	err = tmpl.Execute(buf, map[string]interface{}{"FileInfo": fileInfo, "Spec": spec})
 	if err != nil {
 		log.Fatalf("failed to generate Go file: %s", err)
 	}
@@ -124,26 +168,31 @@ func main() {
 	log.Printf("Wrote %s from %s", outfile, infile)
 }
 
-var parsers = map[string]func(infile string) (interface{}, error){
-	"msg": parseMsgSpec,
-}
-
-type msgSpec struct {
+type FileInfo struct {
 	InFile      string
 	InFileBase  string
 	Raw         string
-	PackageName string
 	MD5Sum      string
+	PackageName string
 	Name        string
-	packageMap  map[string]struct{}
-	Fields      []*msgField
-	Constants   []*msgConstant
-	HasBuiltIn  bool
-	HasSlice    bool
-	HasArray    bool
 }
 
-func (m msgSpec) Packages() (ret []string) {
+type MsgSpec struct {
+	Raw         string
+	MD5Sum      string
+	PackageName string
+	Name        string
+
+	Fields     []*msgField
+	Constants  []*msgConstant
+	HasBuiltIn bool
+	HasSlice   bool
+	HasArray   bool
+
+	packageMap map[string]struct{}
+}
+
+func (m MsgSpec) Packages() (ret []string) {
 	ret = make([]string, 0, len(m.packageMap))
 	for k := range m.packageMap {
 		ret = append(ret, k)
@@ -170,21 +219,14 @@ var goOptionMatcher = regexp.MustCompile(`go:(\w+)=([^\s]+)`)
 
 //uint8 status
 //uint8 PENDING         = 0   # The goal has yet to be processed by the action server
-func parseMsgSpec(infile string) (interface{}, error) {
-	data, err := ioutil.ReadFile(infile)
-	if err != nil {
-		return nil, err
-	}
-
-	spec := new(msgSpec)
-	spec.PackageName = packageName
-	basename := filepath.Base(infile)
-	spec.Name = strings.TrimSuffix(basename, filepath.Ext(basename))
-	spec.InFile = infile
-	spec.InFileBase = filepath.Base(infile)
+func parseMsgSpec(packageName, name string, data []byte) (*MsgSpec, error) {
+	spec := new(MsgSpec)
 	spec.Raw = string(data)
 	spec.MD5Sum = fmt.Sprintf("%x", md5.Sum(data))
-	spec.packageMap = make(map[string]struct{})
+	spec.PackageName = packageName
+	spec.Name = name
+
+	spec.packageMap = map[string]struct{}{"github.com/ppg/rosgo/ros": struct{}{}}
 
 	// Read the data line by line
 	buf := bytes.NewBuffer(data)
@@ -364,6 +406,62 @@ func newMsgConstant(rosName, rosType, value string) (constant *msgConstant) {
 	constant.TypeName = rosType
 	constant.Value = value
 	return
+}
+
+type SrvSpec struct {
+	Raw         string
+	MD5Sum      string
+	PackageName string
+	Name        string
+
+	RequestSpec  *MsgSpec
+	ResponseSpec *MsgSpec
+
+	packageMap map[string]struct{}
+}
+
+func (s SrvSpec) Packages() (ret []string) {
+	ret = make([]string, 0, len(s.packageMap))
+	for k := range s.packageMap {
+		ret = append(ret, k)
+	}
+	sort.StringSlice(ret).Sort()
+	return
+}
+
+//int32 a
+//int32 b
+//---
+//int32 sum
+func parseSrvSpec(packageName, name string, data []byte) (*SrvSpec, error) {
+	spec := new(SrvSpec)
+	spec.Raw = string(data)
+	spec.MD5Sum = fmt.Sprintf("%x", md5.Sum(data))
+	spec.PackageName = packageName
+	spec.Name = name
+
+	spec.packageMap = map[string]struct{}{"github.com/ppg/rosgo/ros": struct{}{}}
+
+	raws := strings.Split(string(data), "---")
+	var err error
+	spec.RequestSpec, err = parseMsgSpec(packageName, fmt.Sprintf("%sRequest", name), []byte(raws[0]))
+	if err != nil {
+		return nil, err
+	}
+	spec.ResponseSpec, err = parseMsgSpec(packageName, fmt.Sprintf("%sResponse", name), []byte(raws[1]))
+	if err != nil {
+		return nil, err
+	}
+
+	// Collapse request/response packages into this map
+	for k := range spec.RequestSpec.packageMap {
+		spec.packageMap[k] = struct{}{}
+	}
+	for k := range spec.ResponseSpec.packageMap {
+		spec.packageMap[k] = struct{}{}
+	}
+
+	return spec, nil
 }
 
 type goInfo struct {

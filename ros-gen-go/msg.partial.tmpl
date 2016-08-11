@@ -1,0 +1,92 @@
+type _Msg{{ .Name }} struct {
+	text string
+	name string
+	md5sum string
+}
+
+func (t *_Msg{{ .Name }}) Text() string {
+	return t.text
+}
+
+func (t *_Msg{{ .Name }}) Name() string {
+	return t.name
+}
+
+func (t *_Msg{{ .Name }}) MD5Sum() string {
+	return t.md5sum
+}
+
+func (t *_Msg{{ .Name }}) NewMessage() ros.Message {
+	m := new({{ .Name }})
+	{{/* NOTE: No need to initialize fields as they are all zero value, which is default in go */}}
+	return m
+}
+
+var (
+	Msg{{ .Name }} = &_Msg{{ .Name }} {
+		`{{ .Raw }}`,
+		"{{ .PackageName }}/{{ .Name }}",
+		"{{ .MD5Sum }}",
+	}
+)
+
+type {{ .Name }} struct {
+	{{- range .Fields }}
+	{{ .Name }} {{ if .IsArray }}[{{ if gt .ArraySize 0 }}{{ .ArraySize }}{{ end }}]{{ end }}{{ .GoTypeName }}
+	{{- end }}
+}
+
+func (m *{{ .Name }}) Serialize(w io.Writer) (err error) {
+	{{- range .Fields }}
+  {{- if .IsArray }}
+	// Write size little endian
+  err = binary.Write(w, binary.LittleEndian, uint32(len(m.{{ .Name }})))
+	if err != nil {
+		return fmt.Errorf("could not write array length: %s", err)
+	}
+  for _, elem := range m.{{ .Name }} {
+    if err = ros.SerializeMessageField(w, "{{ .TypeName }}", &elem); err != nil {
+      return err
+    }
+	}
+  {{- else }}
+  if err = ros.SerializeMessageField(w, "{{ .TypeName }}", &m.{{ .Name }}); err != nil {
+    return err
+  }
+  {{- end }}
+	{{ end }}
+	return
+}
+
+func (m *{{ .Name }}) Deserialize(r io.Reader) (err error) {
+	{{- range .Fields }}
+	// {{ .Name }}
+	{{- if .IsArray }}
+  {
+  // Read size little endian
+	var size uint32
+	if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
+    return fmt.Errorf("cannot read array size for {{ .Name }}: %s", err)
+	}
+	{{- if gt .ArraySize 0 }}
+	if size > {{ .ArraySize }} {
+		return fmt.Errorf("array size for {{ .Name }} too large: expected={{ .ArraySize }}, got=%d", size)
+	}
+	{{- else }}
+	m.{{ .Name }} = make([]{{ .GoTypeName }}, int(size))
+	{{- end }}
+	for i := 0; i < int(size); i++ {
+    if err = ros.DeserializeMessageField(r, "{{ .TypeName }}", &m.{{ .Name }}[i]); err != nil {
+      return err
+    }
+	}
+  }
+
+	{{- else }}
+  if err = ros.DeserializeMessageField(r, "{{ .TypeName }}", &m.{{ .Name }}); err != nil {
+    return err
+  }
+	{{- end }}
+	{{ end }}
+	return
+}
