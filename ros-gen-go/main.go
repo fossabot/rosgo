@@ -13,6 +13,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"sort"
 	"strconv"
 	"strings"
 	"text/template"
@@ -147,6 +148,7 @@ func (m msgSpec) Packages() (ret []string) {
 	for k := range m.packageMap {
 		ret = append(ret, k)
 	}
+	sort.StringSlice(ret).Sort()
 	return
 }
 
@@ -247,7 +249,7 @@ func parseMsgSpec(infile string) (interface{}, error) {
 					spec.HasArray = true
 				}
 			}
-			if field.GoImportName != "" {
+			if field.GoImportName != "" && field.GoImportName != packageName {
 				if pkg, ok := goOptions["package"]; ok {
 					spec.packageMap[pkg] = struct{}{}
 				} else if pkg, ok := builtInImports[field.GoImportName]; ok {
@@ -391,7 +393,22 @@ var builtInInfo = map[string]goInfo{
 }
 
 var builtInImports = map[string]string{
-	"std_msgs": "github.com/ppg/rosgo/msgs/std_msgs",
+	"actionlib_msgs":     "github.com/ppg/rosgo/msgs/actionlib_msgs",
+	"common_msgs":        "github.com/ppg/rosgo/msgs/common_msgs",
+	"control_msgs":       "github.com/ppg/rosgo/msgs/control_msgs",
+	"diagnostic_msgs":    "github.com/ppg/rosgo/msgs/diagnostic_msgs",
+	"geometry_msgs":      "github.com/ppg/rosgo/msgs/geometry_msgs",
+	"map_msgs":           "github.com/ppg/rosgo/msgs/map_msgs",
+	"nav_msgs":           "github.com/ppg/rosgo/msgs/nav_msgs",
+	"rosgraph_msgs":      "github.com/ppg/rosgo/msgs/rosgraph_msgs",
+	"sensor_msgs":        "github.com/ppg/rosgo/msgs/sensor_msgs",
+	"shape_msgs":         "github.com/ppg/rosgo/msgs/shape_msgs",
+	"smach_msgs":         "github.com/ppg/rosgo/msgs/smach_msgs",
+	"std_msgs":           "github.com/ppg/rosgo/msgs/std_msgs",
+	"stereo_msgs":        "github.com/ppg/rosgo/msgs/stereo_msgs",
+	"tf2_msgs":           "github.com/ppg/rosgo/msgs/tf2_msgs",
+	"trajectory_msgs":    "github.com/ppg/rosgo/msgs/trajectory_msgs",
+	"visualization_msgs": "github.com/ppg/rosgo/msgs/visualization_msgs",
 }
 
 // snakeToCamel returns a string converted from snake case to uppercase

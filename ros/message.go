@@ -17,7 +17,6 @@ type MessageType interface {
 }
 
 type Message interface {
-	Type() MessageType
 	Serialize(io.Writer) error
 	Deserialize(io.Reader) error
 }

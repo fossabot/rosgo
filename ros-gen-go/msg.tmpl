@@ -54,10 +54,6 @@ type {{ .Name }} struct {
 	{{- end }}
 }
 
-func (m *{{ .Name }}) Type() ros.MessageType {
-	return Msg{{ .Name }}
-}
-
 func (m *{{ .Name }}) Serialize(w io.Writer) (err error) {
 	{{- range .Fields }}
   {{- if .IsArray }}
