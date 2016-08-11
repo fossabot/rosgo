@@ -1,6 +1,6 @@
 # rosgo
 [![Build Status](https://travis-ci.org/ppg/rosgo.svg?branch=master)](https://travis-ci.org/ppg/rosgo)
-[![Coverage Status](https://coveralls.io/repos/github/ppg/rosgo/badge.svg?branch=coveralls)](https://coveralls.io/github/ppg/rosgo?branch=coveralls)
+[![Coverage Status](https://coveralls.io/repos/github/ppg/rosgo/badge.svg?branch=master)](https://coveralls.io/github/ppg/rosgo?branch=master)
 
 Package Summary
 ---------------------------------
