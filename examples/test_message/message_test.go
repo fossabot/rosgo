@@ -237,7 +237,7 @@ func TestSerialize(t *testing.T) {
 	msg.T = ros.NewTime(0x89ABCDEF, 0x01234567)
 	msg.D = ros.NewDuration(0x89ABCDEF, 0x01234567)
 	msg.S = "Hello, world!"
-	msg.C = std_msgs.ColorRGBA{1.0, 0.5, 0.25, 0.125}
+	msg.C = std_msgs.ColorRGBA{R: 1.0, G: 0.5, B: 0.25, A: 0.125}
 
 	msg.DynAry = append(msg.DynAry, 0x01234567)
 	msg.DynAry = append(msg.DynAry, 0x89ABCDEF)
