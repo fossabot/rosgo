@@ -9,6 +9,7 @@ import (
 	"fmt"
 
 	"github.com/ppg/rosgo/ros"
+	"github.com/ppg/rosgo/msgs/geometry_msgs"
 	"github.com/ppg/rosgo/msgs/std_msgs"
 )
 
@@ -78,10 +79,6 @@ type Imu struct {
 	LinearAccelerationCovariance [9]float64
 }
 
-func (m *Imu) Type() ros.MessageType {
-	return MsgImu
-}
-
 func (m *Imu) Serialize(w io.Writer) (err error) {
 	if err = ros.SerializeMessageField(w, "Header", &m.Header); err != nil {
 		return err
@@ -147,17 +144,19 @@ func (m *Imu) Deserialize(r io.Reader) (err error) {
 	}
 
 	// OrientationCovariance
-	// Read size little endian
-	var size uint32
-	if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
-		return fmt.Errorf("cannot read array size for OrientationCovariance: %s", err)
-	}
-	if size > 9 {
-		return fmt.Errorf("array size for OrientationCovariance too large: expected=9, got=%d", size)
-	}
-	for i := 0; i < int(size); i++ {
-		if err = ros.DeserializeMessageField(r, "float64", &m.OrientationCovariance[i]); err != nil {
-			return err
+	{
+		// Read size little endian
+		var size uint32
+		if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
+			return fmt.Errorf("cannot read array size for OrientationCovariance: %s", err)
+		}
+		if size > 9 {
+			return fmt.Errorf("array size for OrientationCovariance too large: expected=9, got=%d", size)
+		}
+		for i := 0; i < int(size); i++ {
+			if err = ros.DeserializeMessageField(r, "float64", &m.OrientationCovariance[i]); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -167,17 +166,19 @@ func (m *Imu) Deserialize(r io.Reader) (err error) {
 	}
 
 	// AngularVelocityCovariance
-	// Read size little endian
-	var size uint32
-	if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
-		return fmt.Errorf("cannot read array size for AngularVelocityCovariance: %s", err)
-	}
-	if size > 9 {
-		return fmt.Errorf("array size for AngularVelocityCovariance too large: expected=9, got=%d", size)
-	}
-	for i := 0; i < int(size); i++ {
-		if err = ros.DeserializeMessageField(r, "float64", &m.AngularVelocityCovariance[i]); err != nil {
-			return err
+	{
+		// Read size little endian
+		var size uint32
+		if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
+			return fmt.Errorf("cannot read array size for AngularVelocityCovariance: %s", err)
+		}
+		if size > 9 {
+			return fmt.Errorf("array size for AngularVelocityCovariance too large: expected=9, got=%d", size)
+		}
+		for i := 0; i < int(size); i++ {
+			if err = ros.DeserializeMessageField(r, "float64", &m.AngularVelocityCovariance[i]); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -187,17 +188,19 @@ func (m *Imu) Deserialize(r io.Reader) (err error) {
 	}
 
 	// LinearAccelerationCovariance
-	// Read size little endian
-	var size uint32
-	if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
-		return fmt.Errorf("cannot read array size for LinearAccelerationCovariance: %s", err)
-	}
-	if size > 9 {
-		return fmt.Errorf("array size for LinearAccelerationCovariance too large: expected=9, got=%d", size)
-	}
-	for i := 0; i < int(size); i++ {
-		if err = ros.DeserializeMessageField(r, "float64", &m.LinearAccelerationCovariance[i]); err != nil {
-			return err
+	{
+		// Read size little endian
+		var size uint32
+		if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
+			return fmt.Errorf("cannot read array size for LinearAccelerationCovariance: %s", err)
+		}
+		if size > 9 {
+			return fmt.Errorf("array size for LinearAccelerationCovariance too large: expected=9, got=%d", size)
+		}
+		for i := 0; i < int(size); i++ {
+			if err = ros.DeserializeMessageField(r, "float64", &m.LinearAccelerationCovariance[i]); err != nil {
+				return err
+			}
 		}
 	}
 

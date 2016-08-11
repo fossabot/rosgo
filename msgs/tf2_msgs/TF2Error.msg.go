@@ -56,10 +56,6 @@ type TF2Error struct {
 	ErrorString string
 }
 
-func (m *TF2Error) Type() ros.MessageType {
-	return MsgTF2Error
-}
-
 func (m *TF2Error) Serialize(w io.Writer) (err error) {
 	if err = ros.SerializeMessageField(w, "uint8", &m.Error); err != nil {
 		return err

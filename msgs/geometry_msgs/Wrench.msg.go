@@ -50,10 +50,6 @@ type Wrench struct {
 	Torque Vector3
 }
 
-func (m *Wrench) Type() ros.MessageType {
-	return MsgWrench
-}
-
 func (m *Wrench) Serialize(w io.Writer) (err error) {
 	if err = ros.SerializeMessageField(w, "Vector3", &m.Force); err != nil {
 		return err

@@ -9,6 +9,7 @@ import (
 	"fmt"
 
 	"github.com/ppg/rosgo/ros"
+	"github.com/ppg/rosgo/msgs/geometry_msgs"
 	"github.com/ppg/rosgo/msgs/std_msgs"
 )
 
@@ -64,10 +65,6 @@ type PointCloud struct {
 	Channels []ChannelFloat32
 }
 
-func (m *PointCloud) Type() ros.MessageType {
-	return MsgPointCloud
-}
-
 func (m *PointCloud) Serialize(w io.Writer) (err error) {
 	if err = ros.SerializeMessageField(w, "Header", &m.Header); err != nil {
 		return err
@@ -105,28 +102,32 @@ func (m *PointCloud) Deserialize(r io.Reader) (err error) {
 	}
 
 	// Points
-	// Read size little endian
-	var size uint32
-	if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
-		return fmt.Errorf("cannot read array size for Points: %s", err)
-	}
-	m.Points = make([]geometry_msgs.Point32, int(size))
-	for i := 0; i < int(size); i++ {
-		if err = ros.DeserializeMessageField(r, "geometry_msgs/Point32", &m.Points[i]); err != nil {
-			return err
+	{
+		// Read size little endian
+		var size uint32
+		if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
+			return fmt.Errorf("cannot read array size for Points: %s", err)
+		}
+		m.Points = make([]geometry_msgs.Point32, int(size))
+		for i := 0; i < int(size); i++ {
+			if err = ros.DeserializeMessageField(r, "geometry_msgs/Point32", &m.Points[i]); err != nil {
+				return err
+			}
 		}
 	}
 
 	// Channels
-	// Read size little endian
-	var size uint32
-	if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
-		return fmt.Errorf("cannot read array size for Channels: %s", err)
-	}
-	m.Channels = make([]ChannelFloat32, int(size))
-	for i := 0; i < int(size); i++ {
-		if err = ros.DeserializeMessageField(r, "ChannelFloat32", &m.Channels[i]); err != nil {
-			return err
+	{
+		// Read size little endian
+		var size uint32
+		if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
+			return fmt.Errorf("cannot read array size for Channels: %s", err)
+		}
+		m.Channels = make([]ChannelFloat32, int(size))
+		for i := 0; i < int(size); i++ {
+			if err = ros.DeserializeMessageField(r, "ChannelFloat32", &m.Channels[i]); err != nil {
+				return err
+			}
 		}
 	}
 

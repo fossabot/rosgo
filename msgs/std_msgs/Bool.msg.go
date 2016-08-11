@@ -45,10 +45,6 @@ type Bool struct {
 	Data bool
 }
 
-func (m *Bool) Type() ros.MessageType {
-	return MsgBool
-}
-
 func (m *Bool) Serialize(w io.Writer) (err error) {
 	if err = ros.SerializeMessageField(w, "bool", &m.Data); err != nil {
 		return err

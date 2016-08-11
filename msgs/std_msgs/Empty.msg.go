@@ -44,10 +44,6 @@ var (
 type Empty struct {
 }
 
-func (m *Empty) Type() ros.MessageType {
-	return MsgEmpty
-}
-
 func (m *Empty) Serialize(w io.Writer) (err error) {
 	return
 }

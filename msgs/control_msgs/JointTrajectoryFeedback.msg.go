@@ -46,10 +46,6 @@ var (
 type JointTrajectoryFeedback struct {
 }
 
-func (m *JointTrajectoryFeedback) Type() ros.MessageType {
-	return MsgJointTrajectoryFeedback
-}
-
 func (m *JointTrajectoryFeedback) Serialize(w io.Writer) (err error) {
 	return
 }

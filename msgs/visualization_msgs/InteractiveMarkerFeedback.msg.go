@@ -7,6 +7,7 @@ import (
 	"io"
 
 	"github.com/ppg/rosgo/ros"
+	"github.com/ppg/rosgo/msgs/geometry_msgs"
 	"github.com/ppg/rosgo/msgs/std_msgs"
 )
 
@@ -94,10 +95,6 @@ type InteractiveMarkerFeedback struct {
 	MenuEntryID     uint32
 	MousePoint      geometry_msgs.Point
 	MousePointValid bool
-}
-
-func (m *InteractiveMarkerFeedback) Type() ros.MessageType {
-	return MsgInteractiveMarkerFeedback
 }
 
 func (m *InteractiveMarkerFeedback) Serialize(w io.Writer) (err error) {

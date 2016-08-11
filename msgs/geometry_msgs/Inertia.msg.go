@@ -68,10 +68,6 @@ type Inertia struct {
 	Izz float64
 }
 
-func (m *Inertia) Type() ros.MessageType {
-	return MsgInertia
-}
-
 func (m *Inertia) Serialize(w io.Writer) (err error) {
 	if err = ros.SerializeMessageField(w, "float64", &m.M); err != nil {
 		return err

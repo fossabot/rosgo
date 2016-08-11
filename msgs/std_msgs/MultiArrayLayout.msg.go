@@ -74,10 +74,6 @@ type MultiArrayLayout struct {
 	DataOffset uint32
 }
 
-func (m *MultiArrayLayout) Type() ros.MessageType {
-	return MsgMultiArrayLayout
-}
-
 func (m *MultiArrayLayout) Serialize(w io.Writer) (err error) {
 	// Write size little endian
 	err = binary.Write(w, binary.LittleEndian, uint32(len(m.Dim)))
@@ -99,15 +95,17 @@ func (m *MultiArrayLayout) Serialize(w io.Writer) (err error) {
 
 func (m *MultiArrayLayout) Deserialize(r io.Reader) (err error) {
 	// Dim
-	// Read size little endian
-	var size uint32
-	if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
-		return fmt.Errorf("cannot read array size for Dim: %s", err)
-	}
-	m.Dim = make([]MultiArrayDimension, int(size))
-	for i := 0; i < int(size); i++ {
-		if err = ros.DeserializeMessageField(r, "MultiArrayDimension", &m.Dim[i]); err != nil {
-			return err
+	{
+		// Read size little endian
+		var size uint32
+		if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
+			return fmt.Errorf("cannot read array size for Dim: %s", err)
+		}
+		m.Dim = make([]MultiArrayDimension, int(size))
+		for i := 0; i < int(size); i++ {
+			if err = ros.DeserializeMessageField(r, "MultiArrayDimension", &m.Dim[i]); err != nil {
+				return err
+			}
 		}
 	}
 

@@ -60,10 +60,6 @@ type MultiDOFJointTrajectory struct {
 	Points     []MultiDOFJointTrajectoryPoint
 }
 
-func (m *MultiDOFJointTrajectory) Type() ros.MessageType {
-	return MsgMultiDOFJointTrajectory
-}
-
 func (m *MultiDOFJointTrajectory) Serialize(w io.Writer) (err error) {
 	if err = ros.SerializeMessageField(w, "Header", &m.Header); err != nil {
 		return err
@@ -101,28 +97,32 @@ func (m *MultiDOFJointTrajectory) Deserialize(r io.Reader) (err error) {
 	}
 
 	// JointNames
-	// Read size little endian
-	var size uint32
-	if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
-		return fmt.Errorf("cannot read array size for JointNames: %s", err)
-	}
-	m.JointNames = make([]string, int(size))
-	for i := 0; i < int(size); i++ {
-		if err = ros.DeserializeMessageField(r, "string", &m.JointNames[i]); err != nil {
-			return err
+	{
+		// Read size little endian
+		var size uint32
+		if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
+			return fmt.Errorf("cannot read array size for JointNames: %s", err)
+		}
+		m.JointNames = make([]string, int(size))
+		for i := 0; i < int(size); i++ {
+			if err = ros.DeserializeMessageField(r, "string", &m.JointNames[i]); err != nil {
+				return err
+			}
 		}
 	}
 
 	// Points
-	// Read size little endian
-	var size uint32
-	if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
-		return fmt.Errorf("cannot read array size for Points: %s", err)
-	}
-	m.Points = make([]MultiDOFJointTrajectoryPoint, int(size))
-	for i := 0; i < int(size); i++ {
-		if err = ros.DeserializeMessageField(r, "MultiDOFJointTrajectoryPoint", &m.Points[i]); err != nil {
-			return err
+	{
+		// Read size little endian
+		var size uint32
+		if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
+			return fmt.Errorf("cannot read array size for Points: %s", err)
+		}
+		m.Points = make([]MultiDOFJointTrajectoryPoint, int(size))
+		for i := 0; i < int(size); i++ {
+			if err = ros.DeserializeMessageField(r, "MultiDOFJointTrajectoryPoint", &m.Points[i]); err != nil {
+				return err
+			}
 		}
 	}
 

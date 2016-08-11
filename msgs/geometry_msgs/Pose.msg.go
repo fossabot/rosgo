@@ -49,10 +49,6 @@ type Pose struct {
 	Orientation Quaternion
 }
 
-func (m *Pose) Type() ros.MessageType {
-	return MsgPose
-}
-
 func (m *Pose) Serialize(w io.Writer) (err error) {
 	if err = ros.SerializeMessageField(w, "Point", &m.Position); err != nil {
 		return err

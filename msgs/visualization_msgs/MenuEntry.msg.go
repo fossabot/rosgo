@@ -103,10 +103,6 @@ type MenuEntry struct {
 	CommandType uint8
 }
 
-func (m *MenuEntry) Type() ros.MessageType {
-	return MsgMenuEntry
-}
-
 func (m *MenuEntry) Serialize(w io.Writer) (err error) {
 	if err = ros.SerializeMessageField(w, "uint32", &m.ID); err != nil {
 		return err

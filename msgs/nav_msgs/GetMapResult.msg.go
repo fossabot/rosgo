@@ -47,10 +47,6 @@ type GetMapResult struct {
 	Map OccupancyGrid
 }
 
-func (m *GetMapResult) Type() ros.MessageType {
-	return MsgGetMapResult
-}
-
 func (m *GetMapResult) Serialize(w io.Writer) (err error) {
 	if err = ros.SerializeMessageField(w, "nav_msgs/OccupancyGrid", &m.Map); err != nil {
 		return err

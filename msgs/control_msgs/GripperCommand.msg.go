@@ -48,10 +48,6 @@ type GripperCommand struct {
 	MaxEffort float64
 }
 
-func (m *GripperCommand) Type() ros.MessageType {
-	return MsgGripperCommand
-}
-
 func (m *GripperCommand) Serialize(w io.Writer) (err error) {
 	if err = ros.SerializeMessageField(w, "float64", &m.Position); err != nil {
 		return err

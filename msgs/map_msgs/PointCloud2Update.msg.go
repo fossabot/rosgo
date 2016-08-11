@@ -7,6 +7,7 @@ import (
 	"io"
 
 	"github.com/ppg/rosgo/ros"
+	"github.com/ppg/rosgo/msgs/sensor_msgs"
 	"github.com/ppg/rosgo/msgs/std_msgs"
 )
 
@@ -51,10 +52,6 @@ type PointCloud2Update struct {
 	Header std_msgs.Header
 	Type   uint32
 	Points sensor_msgs.PointCloud2
-}
-
-func (m *PointCloud2Update) Type() ros.MessageType {
-	return MsgPointCloud2Update
 }
 
 func (m *PointCloud2Update) Serialize(w io.Writer) (err error) {

@@ -46,10 +46,6 @@ var (
 type LookupTransformFeedback struct {
 }
 
-func (m *LookupTransformFeedback) Type() ros.MessageType {
-	return MsgLookupTransformFeedback
-}
-
 func (m *LookupTransformFeedback) Serialize(w io.Writer) (err error) {
 	return
 }

@@ -66,10 +66,6 @@ type DiagnosticStatus struct {
 	Values     []KeyValue
 }
 
-func (m *DiagnosticStatus) Type() ros.MessageType {
-	return MsgDiagnosticStatus
-}
-
 func (m *DiagnosticStatus) Serialize(w io.Writer) (err error) {
 	if err = ros.SerializeMessageField(w, "byte", &m.Level); err != nil {
 		return err
@@ -123,15 +119,17 @@ func (m *DiagnosticStatus) Deserialize(r io.Reader) (err error) {
 	}
 
 	// Values
-	// Read size little endian
-	var size uint32
-	if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
-		return fmt.Errorf("cannot read array size for Values: %s", err)
-	}
-	m.Values = make([]KeyValue, int(size))
-	for i := 0; i < int(size); i++ {
-		if err = ros.DeserializeMessageField(r, "KeyValue", &m.Values[i]); err != nil {
-			return err
+	{
+		// Read size little endian
+		var size uint32
+		if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
+			return fmt.Errorf("cannot read array size for Values: %s", err)
+		}
+		m.Values = make([]KeyValue, int(size))
+		for i := 0; i < int(size); i++ {
+			if err = ros.DeserializeMessageField(r, "KeyValue", &m.Values[i]); err != nil {
+				return err
+			}
 		}
 	}
 

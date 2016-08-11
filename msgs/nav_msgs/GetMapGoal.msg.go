@@ -46,10 +46,6 @@ var (
 type GetMapGoal struct {
 }
 
-func (m *GetMapGoal) Type() ros.MessageType {
-	return MsgGetMapGoal
-}
-
 func (m *GetMapGoal) Serialize(w io.Writer) (err error) {
 	return
 }

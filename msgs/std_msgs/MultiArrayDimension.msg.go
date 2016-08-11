@@ -49,10 +49,6 @@ type MultiArrayDimension struct {
 	Stride uint32
 }
 
-func (m *MultiArrayDimension) Type() ros.MessageType {
-	return MsgMultiArrayDimension
-}
-
 func (m *MultiArrayDimension) Serialize(w io.Writer) (err error) {
 	if err = ros.SerializeMessageField(w, "string", &m.Label); err != nil {
 		return err

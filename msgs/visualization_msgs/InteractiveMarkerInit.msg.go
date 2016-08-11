@@ -63,10 +63,6 @@ type InteractiveMarkerInit struct {
 	Markers  []InteractiveMarker
 }
 
-func (m *InteractiveMarkerInit) Type() ros.MessageType {
-	return MsgInteractiveMarkerInit
-}
-
 func (m *InteractiveMarkerInit) Serialize(w io.Writer) (err error) {
 	if err = ros.SerializeMessageField(w, "string", &m.ServerID); err != nil {
 		return err
@@ -102,15 +98,17 @@ func (m *InteractiveMarkerInit) Deserialize(r io.Reader) (err error) {
 	}
 
 	// Markers
-	// Read size little endian
-	var size uint32
-	if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
-		return fmt.Errorf("cannot read array size for Markers: %s", err)
-	}
-	m.Markers = make([]InteractiveMarker, int(size))
-	for i := 0; i < int(size); i++ {
-		if err = ros.DeserializeMessageField(r, "InteractiveMarker", &m.Markers[i]); err != nil {
-			return err
+	{
+		// Read size little endian
+		var size uint32
+		if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
+			return fmt.Errorf("cannot read array size for Markers: %s", err)
+		}
+		m.Markers = make([]InteractiveMarker, int(size))
+		for i := 0; i < int(size); i++ {
+			if err = ros.DeserializeMessageField(r, "InteractiveMarker", &m.Markers[i]); err != nil {
+				return err
+			}
 		}
 	}
 

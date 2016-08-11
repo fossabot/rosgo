@@ -68,10 +68,6 @@ type Illuminance struct {
 	Variance    float64
 }
 
-func (m *Illuminance) Type() ros.MessageType {
-	return MsgIlluminance
-}
-
 func (m *Illuminance) Serialize(w io.Writer) (err error) {
 	if err = ros.SerializeMessageField(w, "Header", &m.Header); err != nil {
 		return err

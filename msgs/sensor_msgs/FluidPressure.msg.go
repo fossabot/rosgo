@@ -59,10 +59,6 @@ type FluidPressure struct {
 	Variance      float64
 }
 
-func (m *FluidPressure) Type() ros.MessageType {
-	return MsgFluidPressure
-}
-
 func (m *FluidPressure) Serialize(w io.Writer) (err error) {
 	if err = ros.SerializeMessageField(w, "Header", &m.Header); err != nil {
 		return err

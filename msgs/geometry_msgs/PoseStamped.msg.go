@@ -50,10 +50,6 @@ type PoseStamped struct {
 	Pose   Pose
 }
 
-func (m *PoseStamped) Type() ros.MessageType {
-	return MsgPoseStamped
-}
-
 func (m *PoseStamped) Serialize(w io.Writer) (err error) {
 	if err = ros.SerializeMessageField(w, "Header", &m.Header); err != nil {
 		return err

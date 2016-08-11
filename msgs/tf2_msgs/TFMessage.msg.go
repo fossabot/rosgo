@@ -9,6 +9,7 @@ import (
 	"fmt"
 
 	"github.com/ppg/rosgo/ros"
+	"github.com/ppg/rosgo/msgs/geometry_msgs"
 )
 
 type _MsgTFMessage struct {
@@ -48,10 +49,6 @@ type TFMessage struct {
 	Transforms []geometry_msgs.TransformStamped
 }
 
-func (m *TFMessage) Type() ros.MessageType {
-	return MsgTFMessage
-}
-
 func (m *TFMessage) Serialize(w io.Writer) (err error) {
 	// Write size little endian
 	err = binary.Write(w, binary.LittleEndian, uint32(len(m.Transforms)))
@@ -69,15 +66,17 @@ func (m *TFMessage) Serialize(w io.Writer) (err error) {
 
 func (m *TFMessage) Deserialize(r io.Reader) (err error) {
 	// Transforms
-	// Read size little endian
-	var size uint32
-	if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
-		return fmt.Errorf("cannot read array size for Transforms: %s", err)
-	}
-	m.Transforms = make([]geometry_msgs.TransformStamped, int(size))
-	for i := 0; i < int(size); i++ {
-		if err = ros.DeserializeMessageField(r, "geometry_msgs/TransformStamped", &m.Transforms[i]); err != nil {
-			return err
+	{
+		// Read size little endian
+		var size uint32
+		if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
+			return fmt.Errorf("cannot read array size for Transforms: %s", err)
+		}
+		m.Transforms = make([]geometry_msgs.TransformStamped, int(size))
+		for i := 0; i < int(size); i++ {
+			if err = ros.DeserializeMessageField(r, "geometry_msgs/TransformStamped", &m.Transforms[i]); err != nil {
+				return err
+			}
 		}
 	}
 

@@ -54,10 +54,6 @@ type UInt64MultiArray struct {
 	Data   []uint64
 }
 
-func (m *UInt64MultiArray) Type() ros.MessageType {
-	return MsgUInt64MultiArray
-}
-
 func (m *UInt64MultiArray) Serialize(w io.Writer) (err error) {
 	if err = ros.SerializeMessageField(w, "MultiArrayLayout", &m.Layout); err != nil {
 		return err
@@ -84,15 +80,17 @@ func (m *UInt64MultiArray) Deserialize(r io.Reader) (err error) {
 	}
 
 	// Data
-	// Read size little endian
-	var size uint32
-	if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
-		return fmt.Errorf("cannot read array size for Data: %s", err)
-	}
-	m.Data = make([]uint64, int(size))
-	for i := 0; i < int(size); i++ {
-		if err = ros.DeserializeMessageField(r, "uint64", &m.Data[i]); err != nil {
-			return err
+	{
+		// Read size little endian
+		var size uint32
+		if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
+			return fmt.Errorf("cannot read array size for Data: %s", err)
+		}
+		m.Data = make([]uint64, int(size))
+		for i := 0; i < int(size); i++ {
+			if err = ros.DeserializeMessageField(r, "uint64", &m.Data[i]); err != nil {
+				return err
+			}
 		}
 	}
 

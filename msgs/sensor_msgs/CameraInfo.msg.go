@@ -189,10 +189,6 @@ type CameraInfo struct {
 	Roi             RegionOfInterest
 }
 
-func (m *CameraInfo) Type() ros.MessageType {
-	return MsgCameraInfo
-}
-
 func (m *CameraInfo) Serialize(w io.Writer) (err error) {
 	if err = ros.SerializeMessageField(w, "Header", &m.Header); err != nil {
 		return err
@@ -291,60 +287,68 @@ func (m *CameraInfo) Deserialize(r io.Reader) (err error) {
 	}
 
 	// D
-	// Read size little endian
-	var size uint32
-	if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
-		return fmt.Errorf("cannot read array size for D: %s", err)
-	}
-	m.D = make([]float64, int(size))
-	for i := 0; i < int(size); i++ {
-		if err = ros.DeserializeMessageField(r, "float64", &m.D[i]); err != nil {
-			return err
+	{
+		// Read size little endian
+		var size uint32
+		if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
+			return fmt.Errorf("cannot read array size for D: %s", err)
+		}
+		m.D = make([]float64, int(size))
+		for i := 0; i < int(size); i++ {
+			if err = ros.DeserializeMessageField(r, "float64", &m.D[i]); err != nil {
+				return err
+			}
 		}
 	}
 
 	// K
-	// Read size little endian
-	var size uint32
-	if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
-		return fmt.Errorf("cannot read array size for K: %s", err)
-	}
-	if size > 9 {
-		return fmt.Errorf("array size for K too large: expected=9, got=%d", size)
-	}
-	for i := 0; i < int(size); i++ {
-		if err = ros.DeserializeMessageField(r, "float64", &m.K[i]); err != nil {
-			return err
+	{
+		// Read size little endian
+		var size uint32
+		if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
+			return fmt.Errorf("cannot read array size for K: %s", err)
+		}
+		if size > 9 {
+			return fmt.Errorf("array size for K too large: expected=9, got=%d", size)
+		}
+		for i := 0; i < int(size); i++ {
+			if err = ros.DeserializeMessageField(r, "float64", &m.K[i]); err != nil {
+				return err
+			}
 		}
 	}
 
 	// R
-	// Read size little endian
-	var size uint32
-	if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
-		return fmt.Errorf("cannot read array size for R: %s", err)
-	}
-	if size > 9 {
-		return fmt.Errorf("array size for R too large: expected=9, got=%d", size)
-	}
-	for i := 0; i < int(size); i++ {
-		if err = ros.DeserializeMessageField(r, "float64", &m.R[i]); err != nil {
-			return err
+	{
+		// Read size little endian
+		var size uint32
+		if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
+			return fmt.Errorf("cannot read array size for R: %s", err)
+		}
+		if size > 9 {
+			return fmt.Errorf("array size for R too large: expected=9, got=%d", size)
+		}
+		for i := 0; i < int(size); i++ {
+			if err = ros.DeserializeMessageField(r, "float64", &m.R[i]); err != nil {
+				return err
+			}
 		}
 	}
 
 	// P
-	// Read size little endian
-	var size uint32
-	if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
-		return fmt.Errorf("cannot read array size for P: %s", err)
-	}
-	if size > 12 {
-		return fmt.Errorf("array size for P too large: expected=12, got=%d", size)
-	}
-	for i := 0; i < int(size); i++ {
-		if err = ros.DeserializeMessageField(r, "float64", &m.P[i]); err != nil {
-			return err
+	{
+		// Read size little endian
+		var size uint32
+		if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
+			return fmt.Errorf("cannot read array size for P: %s", err)
+		}
+		if size > 12 {
+			return fmt.Errorf("array size for P too large: expected=12, got=%d", size)
+		}
+		for i := 0; i < int(size); i++ {
+			if err = ros.DeserializeMessageField(r, "float64", &m.P[i]); err != nil {
+				return err
+			}
 		}
 	}
 

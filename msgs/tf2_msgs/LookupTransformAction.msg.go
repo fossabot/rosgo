@@ -52,10 +52,6 @@ type LookupTransformAction struct {
 	ActionFeedback LookupTransformActionFeedback
 }
 
-func (m *LookupTransformAction) Type() ros.MessageType {
-	return MsgLookupTransformAction
-}
-
 func (m *LookupTransformAction) Serialize(w io.Writer) (err error) {
 	if err = ros.SerializeMessageField(w, "LookupTransformActionGoal", &m.ActionGoal); err != nil {
 		return err

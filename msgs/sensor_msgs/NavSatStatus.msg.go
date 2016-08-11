@@ -69,10 +69,6 @@ type NavSatStatus struct {
 	Service     uint16
 }
 
-func (m *NavSatStatus) Type() ros.MessageType {
-	return MsgNavSatStatus
-}
-
 func (m *NavSatStatus) Serialize(w io.Writer) (err error) {
 	if err = ros.SerializeMessageField(w, "int8", &m.STATUSNOFIX); err != nil {
 		return err

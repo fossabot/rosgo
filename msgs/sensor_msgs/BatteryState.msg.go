@@ -110,10 +110,6 @@ type BatteryState struct {
 	SerialNumber          string
 }
 
-func (m *BatteryState) Type() ros.MessageType {
-	return MsgBatteryState
-}
-
 func (m *BatteryState) Serialize(w io.Writer) (err error) {
 	if err = ros.SerializeMessageField(w, "Header", &m.Header); err != nil {
 		return err
@@ -238,15 +234,17 @@ func (m *BatteryState) Deserialize(r io.Reader) (err error) {
 	}
 
 	// CellVoltage
-	// Read size little endian
-	var size uint32
-	if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
-		return fmt.Errorf("cannot read array size for CellVoltage: %s", err)
-	}
-	m.CellVoltage = make([]float32, int(size))
-	for i := 0; i < int(size); i++ {
-		if err = ros.DeserializeMessageField(r, "float32", &m.CellVoltage[i]); err != nil {
-			return err
+	{
+		// Read size little endian
+		var size uint32
+		if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
+			return fmt.Errorf("cannot read array size for CellVoltage: %s", err)
+		}
+		m.CellVoltage = make([]float32, int(size))
+		for i := 0; i < int(size); i++ {
+			if err = ros.DeserializeMessageField(r, "float32", &m.CellVoltage[i]); err != nil {
+				return err
+			}
 		}
 	}
 

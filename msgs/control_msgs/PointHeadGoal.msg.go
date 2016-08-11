@@ -7,6 +7,7 @@ import (
 	"io"
 
 	"github.com/ppg/rosgo/ros"
+	"github.com/ppg/rosgo/msgs/geometry_msgs"
 )
 
 type _MsgPointHeadGoal struct {
@@ -53,10 +54,6 @@ type PointHeadGoal struct {
 	PointingFrame string
 	MinDuration   ros.Duration
 	MaxVelocity   float64
-}
-
-func (m *PointHeadGoal) Type() ros.MessageType {
-	return MsgPointHeadGoal
 }
 
 func (m *PointHeadGoal) Serialize(w io.Writer) (err error) {

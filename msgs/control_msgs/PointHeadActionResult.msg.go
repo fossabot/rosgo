@@ -7,6 +7,7 @@ import (
 	"io"
 
 	"github.com/ppg/rosgo/ros"
+	"github.com/ppg/rosgo/msgs/actionlib_msgs"
 	"github.com/ppg/rosgo/msgs/std_msgs"
 )
 
@@ -51,10 +52,6 @@ type PointHeadActionResult struct {
 	Header std_msgs.Header
 	Status actionlib_msgs.GoalStatus
 	Result PointHeadResult
-}
-
-func (m *PointHeadActionResult) Type() ros.MessageType {
-	return MsgPointHeadActionResult
 }
 
 func (m *PointHeadActionResult) Serialize(w io.Writer) (err error) {

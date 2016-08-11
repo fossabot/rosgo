@@ -70,10 +70,6 @@ type SmachContainerStructure struct {
 	ContainerOutcomes []string
 }
 
-func (m *SmachContainerStructure) Type() ros.MessageType {
-	return MsgSmachContainerStructure
-}
-
 func (m *SmachContainerStructure) Serialize(w io.Writer) (err error) {
 	if err = ros.SerializeMessageField(w, "Header", &m.Header); err != nil {
 		return err
@@ -153,67 +149,77 @@ func (m *SmachContainerStructure) Deserialize(r io.Reader) (err error) {
 	}
 
 	// Children
-	// Read size little endian
-	var size uint32
-	if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
-		return fmt.Errorf("cannot read array size for Children: %s", err)
-	}
-	m.Children = make([]string, int(size))
-	for i := 0; i < int(size); i++ {
-		if err = ros.DeserializeMessageField(r, "string", &m.Children[i]); err != nil {
-			return err
+	{
+		// Read size little endian
+		var size uint32
+		if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
+			return fmt.Errorf("cannot read array size for Children: %s", err)
+		}
+		m.Children = make([]string, int(size))
+		for i := 0; i < int(size); i++ {
+			if err = ros.DeserializeMessageField(r, "string", &m.Children[i]); err != nil {
+				return err
+			}
 		}
 	}
 
 	// InternalOutcomes
-	// Read size little endian
-	var size uint32
-	if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
-		return fmt.Errorf("cannot read array size for InternalOutcomes: %s", err)
-	}
-	m.InternalOutcomes = make([]string, int(size))
-	for i := 0; i < int(size); i++ {
-		if err = ros.DeserializeMessageField(r, "string", &m.InternalOutcomes[i]); err != nil {
-			return err
+	{
+		// Read size little endian
+		var size uint32
+		if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
+			return fmt.Errorf("cannot read array size for InternalOutcomes: %s", err)
+		}
+		m.InternalOutcomes = make([]string, int(size))
+		for i := 0; i < int(size); i++ {
+			if err = ros.DeserializeMessageField(r, "string", &m.InternalOutcomes[i]); err != nil {
+				return err
+			}
 		}
 	}
 
 	// OutcomesFrom
-	// Read size little endian
-	var size uint32
-	if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
-		return fmt.Errorf("cannot read array size for OutcomesFrom: %s", err)
-	}
-	m.OutcomesFrom = make([]string, int(size))
-	for i := 0; i < int(size); i++ {
-		if err = ros.DeserializeMessageField(r, "string", &m.OutcomesFrom[i]); err != nil {
-			return err
+	{
+		// Read size little endian
+		var size uint32
+		if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
+			return fmt.Errorf("cannot read array size for OutcomesFrom: %s", err)
+		}
+		m.OutcomesFrom = make([]string, int(size))
+		for i := 0; i < int(size); i++ {
+			if err = ros.DeserializeMessageField(r, "string", &m.OutcomesFrom[i]); err != nil {
+				return err
+			}
 		}
 	}
 
 	// OutcomesTo
-	// Read size little endian
-	var size uint32
-	if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
-		return fmt.Errorf("cannot read array size for OutcomesTo: %s", err)
-	}
-	m.OutcomesTo = make([]string, int(size))
-	for i := 0; i < int(size); i++ {
-		if err = ros.DeserializeMessageField(r, "string", &m.OutcomesTo[i]); err != nil {
-			return err
+	{
+		// Read size little endian
+		var size uint32
+		if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
+			return fmt.Errorf("cannot read array size for OutcomesTo: %s", err)
+		}
+		m.OutcomesTo = make([]string, int(size))
+		for i := 0; i < int(size); i++ {
+			if err = ros.DeserializeMessageField(r, "string", &m.OutcomesTo[i]); err != nil {
+				return err
+			}
 		}
 	}
 
 	// ContainerOutcomes
-	// Read size little endian
-	var size uint32
-	if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
-		return fmt.Errorf("cannot read array size for ContainerOutcomes: %s", err)
-	}
-	m.ContainerOutcomes = make([]string, int(size))
-	for i := 0; i < int(size); i++ {
-		if err = ros.DeserializeMessageField(r, "string", &m.ContainerOutcomes[i]); err != nil {
-			return err
+	{
+		// Read size little endian
+		var size uint32
+		if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
+			return fmt.Errorf("cannot read array size for ContainerOutcomes: %s", err)
+		}
+		m.ContainerOutcomes = make([]string, int(size))
+		for i := 0; i < int(size); i++ {
+			if err = ros.DeserializeMessageField(r, "string", &m.ContainerOutcomes[i]); err != nil {
+				return err
+			}
 		}
 	}
 

@@ -52,10 +52,6 @@ type PointHeadAction struct {
 	ActionFeedback PointHeadActionFeedback
 }
 
-func (m *PointHeadAction) Type() ros.MessageType {
-	return MsgPointHeadAction
-}
-
 func (m *PointHeadAction) Serialize(w io.Writer) (err error) {
 	if err = ros.SerializeMessageField(w, "PointHeadActionGoal", &m.ActionGoal); err != nil {
 		return err

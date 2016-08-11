@@ -9,6 +9,7 @@ import (
 	"fmt"
 
 	"github.com/ppg/rosgo/ros"
+	"github.com/ppg/rosgo/msgs/geometry_msgs"
 )
 
 type _MsgInteractiveMarkerControl struct {
@@ -131,10 +132,6 @@ type InteractiveMarkerControl struct {
 	Description                  string
 }
 
-func (m *InteractiveMarkerControl) Type() ros.MessageType {
-	return MsgInteractiveMarkerControl
-}
-
 func (m *InteractiveMarkerControl) Serialize(w io.Writer) (err error) {
 	if err = ros.SerializeMessageField(w, "string", &m.Name); err != nil {
 		return err
@@ -205,15 +202,17 @@ func (m *InteractiveMarkerControl) Deserialize(r io.Reader) (err error) {
 	}
 
 	// Markers
-	// Read size little endian
-	var size uint32
-	if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
-		return fmt.Errorf("cannot read array size for Markers: %s", err)
-	}
-	m.Markers = make([]Marker, int(size))
-	for i := 0; i < int(size); i++ {
-		if err = ros.DeserializeMessageField(r, "Marker", &m.Markers[i]); err != nil {
-			return err
+	{
+		// Read size little endian
+		var size uint32
+		if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
+			return fmt.Errorf("cannot read array size for Markers: %s", err)
+		}
+		m.Markers = make([]Marker, int(size))
+		for i := 0; i < int(size); i++ {
+			if err = ros.DeserializeMessageField(r, "Marker", &m.Markers[i]); err != nil {
+				return err
+			}
 		}
 	}
 

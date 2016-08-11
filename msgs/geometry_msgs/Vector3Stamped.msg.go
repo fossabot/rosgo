@@ -50,10 +50,6 @@ type Vector3Stamped struct {
 	Vector Vector3
 }
 
-func (m *Vector3Stamped) Type() ros.MessageType {
-	return MsgVector3Stamped
-}
-
 func (m *Vector3Stamped) Serialize(w io.Writer) (err error) {
 	if err = ros.SerializeMessageField(w, "Header", &m.Header); err != nil {
 		return err

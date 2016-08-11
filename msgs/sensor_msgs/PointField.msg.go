@@ -63,10 +63,6 @@ type PointField struct {
 	Count    uint32
 }
 
-func (m *PointField) Type() ros.MessageType {
-	return MsgPointField
-}
-
 func (m *PointField) Serialize(w io.Writer) (err error) {
 	if err = ros.SerializeMessageField(w, "string", &m.Name); err != nil {
 		return err

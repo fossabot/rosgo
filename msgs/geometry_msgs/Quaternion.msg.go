@@ -54,10 +54,6 @@ type Quaternion struct {
 	W float64
 }
 
-func (m *Quaternion) Type() ros.MessageType {
-	return MsgQuaternion
-}
-
 func (m *Quaternion) Serialize(w io.Writer) (err error) {
 	if err = ros.SerializeMessageField(w, "float64", &m.X); err != nil {
 		return err

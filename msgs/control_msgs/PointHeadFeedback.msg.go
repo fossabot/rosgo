@@ -48,10 +48,6 @@ type PointHeadFeedback struct {
 	PointingAngleError float64
 }
 
-func (m *PointHeadFeedback) Type() ros.MessageType {
-	return MsgPointHeadFeedback
-}
-
 func (m *PointHeadFeedback) Serialize(w io.Writer) (err error) {
 	if err = ros.SerializeMessageField(w, "float64", &m.PointingAngleError); err != nil {
 		return err

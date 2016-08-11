@@ -50,10 +50,6 @@ type TwistStamped struct {
 	Twist  Twist
 }
 
-func (m *TwistStamped) Type() ros.MessageType {
-	return MsgTwistStamped
-}
-
 func (m *TwistStamped) Serialize(w io.Writer) (err error) {
 	if err = ros.SerializeMessageField(w, "Header", &m.Header); err != nil {
 		return err

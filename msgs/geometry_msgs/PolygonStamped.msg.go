@@ -50,10 +50,6 @@ type PolygonStamped struct {
 	Polygon Polygon
 }
 
-func (m *PolygonStamped) Type() ros.MessageType {
-	return MsgPolygonStamped
-}
-
 func (m *PolygonStamped) Serialize(w io.Writer) (err error) {
 	if err = ros.SerializeMessageField(w, "Header", &m.Header); err != nil {
 		return err

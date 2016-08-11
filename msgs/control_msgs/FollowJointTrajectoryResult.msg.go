@@ -70,10 +70,6 @@ type FollowJointTrajectoryResult struct {
 	ErrorString           string
 }
 
-func (m *FollowJointTrajectoryResult) Type() ros.MessageType {
-	return MsgFollowJointTrajectoryResult
-}
-
 func (m *FollowJointTrajectoryResult) Serialize(w io.Writer) (err error) {
 	if err = ros.SerializeMessageField(w, "int32", &m.ErrorCode); err != nil {
 		return err

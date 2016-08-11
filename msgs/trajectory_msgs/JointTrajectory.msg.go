@@ -52,10 +52,6 @@ type JointTrajectory struct {
 	Points     []JointTrajectoryPoint
 }
 
-func (m *JointTrajectory) Type() ros.MessageType {
-	return MsgJointTrajectory
-}
-
 func (m *JointTrajectory) Serialize(w io.Writer) (err error) {
 	if err = ros.SerializeMessageField(w, "Header", &m.Header); err != nil {
 		return err
@@ -93,28 +89,32 @@ func (m *JointTrajectory) Deserialize(r io.Reader) (err error) {
 	}
 
 	// JointNames
-	// Read size little endian
-	var size uint32
-	if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
-		return fmt.Errorf("cannot read array size for JointNames: %s", err)
-	}
-	m.JointNames = make([]string, int(size))
-	for i := 0; i < int(size); i++ {
-		if err = ros.DeserializeMessageField(r, "string", &m.JointNames[i]); err != nil {
-			return err
+	{
+		// Read size little endian
+		var size uint32
+		if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
+			return fmt.Errorf("cannot read array size for JointNames: %s", err)
+		}
+		m.JointNames = make([]string, int(size))
+		for i := 0; i < int(size); i++ {
+			if err = ros.DeserializeMessageField(r, "string", &m.JointNames[i]); err != nil {
+				return err
+			}
 		}
 	}
 
 	// Points
-	// Read size little endian
-	var size uint32
-	if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
-		return fmt.Errorf("cannot read array size for Points: %s", err)
-	}
-	m.Points = make([]JointTrajectoryPoint, int(size))
-	for i := 0; i < int(size); i++ {
-		if err = ros.DeserializeMessageField(r, "JointTrajectoryPoint", &m.Points[i]); err != nil {
-			return err
+	{
+		// Read size little endian
+		var size uint32
+		if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
+			return fmt.Errorf("cannot read array size for Points: %s", err)
+		}
+		m.Points = make([]JointTrajectoryPoint, int(size))
+		for i := 0; i < int(size); i++ {
+			if err = ros.DeserializeMessageField(r, "JointTrajectoryPoint", &m.Points[i]); err != nil {
+				return err
+			}
 		}
 	}
 

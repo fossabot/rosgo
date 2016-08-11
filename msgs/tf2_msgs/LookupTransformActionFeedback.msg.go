@@ -7,6 +7,7 @@ import (
 	"io"
 
 	"github.com/ppg/rosgo/ros"
+	"github.com/ppg/rosgo/msgs/actionlib_msgs"
 	"github.com/ppg/rosgo/msgs/std_msgs"
 )
 
@@ -51,10 +52,6 @@ type LookupTransformActionFeedback struct {
 	Header   std_msgs.Header
 	Status   actionlib_msgs.GoalStatus
 	Feedback LookupTransformFeedback
-}
-
-func (m *LookupTransformActionFeedback) Type() ros.MessageType {
-	return MsgLookupTransformActionFeedback
 }
 
 func (m *LookupTransformActionFeedback) Serialize(w io.Writer) (err error) {

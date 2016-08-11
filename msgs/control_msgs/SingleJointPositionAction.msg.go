@@ -52,10 +52,6 @@ type SingleJointPositionAction struct {
 	ActionFeedback SingleJointPositionActionFeedback
 }
 
-func (m *SingleJointPositionAction) Type() ros.MessageType {
-	return MsgSingleJointPositionAction
-}
-
 func (m *SingleJointPositionAction) Serialize(w io.Writer) (err error) {
 	if err = ros.SerializeMessageField(w, "SingleJointPositionActionGoal", &m.ActionGoal); err != nil {
 		return err

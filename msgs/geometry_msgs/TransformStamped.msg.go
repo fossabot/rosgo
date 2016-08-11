@@ -58,10 +58,6 @@ type TransformStamped struct {
 	Transform    Transform
 }
 
-func (m *TransformStamped) Type() ros.MessageType {
-	return MsgTransformStamped
-}
-
 func (m *TransformStamped) Serialize(w io.Writer) (err error) {
 	if err = ros.SerializeMessageField(w, "Header", &m.Header); err != nil {
 		return err

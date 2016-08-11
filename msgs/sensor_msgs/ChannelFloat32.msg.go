@@ -72,10 +72,6 @@ type ChannelFloat32 struct {
 	Values []float32
 }
 
-func (m *ChannelFloat32) Type() ros.MessageType {
-	return MsgChannelFloat32
-}
-
 func (m *ChannelFloat32) Serialize(w io.Writer) (err error) {
 	if err = ros.SerializeMessageField(w, "string", &m.Name); err != nil {
 		return err
@@ -102,15 +98,17 @@ func (m *ChannelFloat32) Deserialize(r io.Reader) (err error) {
 	}
 
 	// Values
-	// Read size little endian
-	var size uint32
-	if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
-		return fmt.Errorf("cannot read array size for Values: %s", err)
-	}
-	m.Values = make([]float32, int(size))
-	for i := 0; i < int(size); i++ {
-		if err = ros.DeserializeMessageField(r, "float32", &m.Values[i]); err != nil {
-			return err
+	{
+		// Read size little endian
+		var size uint32
+		if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
+			return fmt.Errorf("cannot read array size for Values: %s", err)
+		}
+		m.Values = make([]float32, int(size))
+		for i := 0; i < int(size); i++ {
+			if err = ros.DeserializeMessageField(r, "float32", &m.Values[i]); err != nil {
+				return err
+			}
 		}
 	}
 

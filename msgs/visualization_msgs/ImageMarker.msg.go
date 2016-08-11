@@ -9,6 +9,7 @@ import (
 	"fmt"
 
 	"github.com/ppg/rosgo/ros"
+	"github.com/ppg/rosgo/msgs/geometry_msgs"
 	"github.com/ppg/rosgo/msgs/std_msgs"
 )
 
@@ -81,10 +82,6 @@ type ImageMarker struct {
 	Lifetime      ros.Duration
 	Points        []geometry_msgs.Point
 	OutlineColors []std_msgs.ColorRGBA
-}
-
-func (m *ImageMarker) Type() ros.MessageType {
-	return MsgImageMarker
 }
 
 func (m *ImageMarker) Serialize(w io.Writer) (err error) {
@@ -214,28 +211,32 @@ func (m *ImageMarker) Deserialize(r io.Reader) (err error) {
 	}
 
 	// Points
-	// Read size little endian
-	var size uint32
-	if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
-		return fmt.Errorf("cannot read array size for Points: %s", err)
-	}
-	m.Points = make([]geometry_msgs.Point, int(size))
-	for i := 0; i < int(size); i++ {
-		if err = ros.DeserializeMessageField(r, "geometry_msgs/Point", &m.Points[i]); err != nil {
-			return err
+	{
+		// Read size little endian
+		var size uint32
+		if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
+			return fmt.Errorf("cannot read array size for Points: %s", err)
+		}
+		m.Points = make([]geometry_msgs.Point, int(size))
+		for i := 0; i < int(size); i++ {
+			if err = ros.DeserializeMessageField(r, "geometry_msgs/Point", &m.Points[i]); err != nil {
+				return err
+			}
 		}
 	}
 
 	// OutlineColors
-	// Read size little endian
-	var size uint32
-	if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
-		return fmt.Errorf("cannot read array size for OutlineColors: %s", err)
-	}
-	m.OutlineColors = make([]std_msgs.ColorRGBA, int(size))
-	for i := 0; i < int(size); i++ {
-		if err = ros.DeserializeMessageField(r, "std_msgs/ColorRGBA", &m.OutlineColors[i]); err != nil {
-			return err
+	{
+		// Read size little endian
+		var size uint32
+		if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
+			return fmt.Errorf("cannot read array size for OutlineColors: %s", err)
+		}
+		m.OutlineColors = make([]std_msgs.ColorRGBA, int(size))
+		for i := 0; i < int(size); i++ {
+			if err = ros.DeserializeMessageField(r, "std_msgs/ColorRGBA", &m.OutlineColors[i]); err != nil {
+				return err
+			}
 		}
 	}
 

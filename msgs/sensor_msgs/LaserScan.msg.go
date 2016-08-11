@@ -86,10 +86,6 @@ type LaserScan struct {
 	Intensities    []float32
 }
 
-func (m *LaserScan) Type() ros.MessageType {
-	return MsgLaserScan
-}
-
 func (m *LaserScan) Serialize(w io.Writer) (err error) {
 	if err = ros.SerializeMessageField(w, "Header", &m.Header); err != nil {
 		return err
@@ -190,28 +186,32 @@ func (m *LaserScan) Deserialize(r io.Reader) (err error) {
 	}
 
 	// Ranges
-	// Read size little endian
-	var size uint32
-	if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
-		return fmt.Errorf("cannot read array size for Ranges: %s", err)
-	}
-	m.Ranges = make([]float32, int(size))
-	for i := 0; i < int(size); i++ {
-		if err = ros.DeserializeMessageField(r, "float32", &m.Ranges[i]); err != nil {
-			return err
+	{
+		// Read size little endian
+		var size uint32
+		if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
+			return fmt.Errorf("cannot read array size for Ranges: %s", err)
+		}
+		m.Ranges = make([]float32, int(size))
+		for i := 0; i < int(size); i++ {
+			if err = ros.DeserializeMessageField(r, "float32", &m.Ranges[i]); err != nil {
+				return err
+			}
 		}
 	}
 
 	// Intensities
-	// Read size little endian
-	var size uint32
-	if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
-		return fmt.Errorf("cannot read array size for Intensities: %s", err)
-	}
-	m.Intensities = make([]float32, int(size))
-	for i := 0; i < int(size); i++ {
-		if err = ros.DeserializeMessageField(r, "float32", &m.Intensities[i]); err != nil {
-			return err
+	{
+		// Read size little endian
+		var size uint32
+		if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
+			return fmt.Errorf("cannot read array size for Intensities: %s", err)
+		}
+		m.Intensities = make([]float32, int(size))
+		for i := 0; i < int(size); i++ {
+			if err = ros.DeserializeMessageField(r, "float32", &m.Intensities[i]); err != nil {
+				return err
+			}
 		}
 	}
 

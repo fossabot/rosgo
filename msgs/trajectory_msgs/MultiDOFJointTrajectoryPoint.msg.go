@@ -9,6 +9,7 @@ import (
 	"fmt"
 
 	"github.com/ppg/rosgo/ros"
+	"github.com/ppg/rosgo/msgs/geometry_msgs"
 )
 
 type _MsgMultiDOFJointTrajectoryPoint struct {
@@ -60,10 +61,6 @@ type MultiDOFJointTrajectoryPoint struct {
 	TimeFromStart ros.Duration
 }
 
-func (m *MultiDOFJointTrajectoryPoint) Type() ros.MessageType {
-	return MsgMultiDOFJointTrajectoryPoint
-}
-
 func (m *MultiDOFJointTrajectoryPoint) Serialize(w io.Writer) (err error) {
 	// Write size little endian
 	err = binary.Write(w, binary.LittleEndian, uint32(len(m.Transforms)))
@@ -107,41 +104,47 @@ func (m *MultiDOFJointTrajectoryPoint) Serialize(w io.Writer) (err error) {
 
 func (m *MultiDOFJointTrajectoryPoint) Deserialize(r io.Reader) (err error) {
 	// Transforms
-	// Read size little endian
-	var size uint32
-	if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
-		return fmt.Errorf("cannot read array size for Transforms: %s", err)
-	}
-	m.Transforms = make([]geometry_msgs.Transform, int(size))
-	for i := 0; i < int(size); i++ {
-		if err = ros.DeserializeMessageField(r, "geometry_msgs/Transform", &m.Transforms[i]); err != nil {
-			return err
+	{
+		// Read size little endian
+		var size uint32
+		if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
+			return fmt.Errorf("cannot read array size for Transforms: %s", err)
+		}
+		m.Transforms = make([]geometry_msgs.Transform, int(size))
+		for i := 0; i < int(size); i++ {
+			if err = ros.DeserializeMessageField(r, "geometry_msgs/Transform", &m.Transforms[i]); err != nil {
+				return err
+			}
 		}
 	}
 
 	// Velocities
-	// Read size little endian
-	var size uint32
-	if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
-		return fmt.Errorf("cannot read array size for Velocities: %s", err)
-	}
-	m.Velocities = make([]geometry_msgs.Twist, int(size))
-	for i := 0; i < int(size); i++ {
-		if err = ros.DeserializeMessageField(r, "geometry_msgs/Twist", &m.Velocities[i]); err != nil {
-			return err
+	{
+		// Read size little endian
+		var size uint32
+		if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
+			return fmt.Errorf("cannot read array size for Velocities: %s", err)
+		}
+		m.Velocities = make([]geometry_msgs.Twist, int(size))
+		for i := 0; i < int(size); i++ {
+			if err = ros.DeserializeMessageField(r, "geometry_msgs/Twist", &m.Velocities[i]); err != nil {
+				return err
+			}
 		}
 	}
 
 	// Accelerations
-	// Read size little endian
-	var size uint32
-	if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
-		return fmt.Errorf("cannot read array size for Accelerations: %s", err)
-	}
-	m.Accelerations = make([]geometry_msgs.Twist, int(size))
-	for i := 0; i < int(size); i++ {
-		if err = ros.DeserializeMessageField(r, "geometry_msgs/Twist", &m.Accelerations[i]); err != nil {
-			return err
+	{
+		// Read size little endian
+		var size uint32
+		if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
+			return fmt.Errorf("cannot read array size for Accelerations: %s", err)
+		}
+		m.Accelerations = make([]geometry_msgs.Twist, int(size))
+		for i := 0; i < int(size); i++ {
+			if err = ros.DeserializeMessageField(r, "geometry_msgs/Twist", &m.Accelerations[i]); err != nil {
+				return err
+			}
 		}
 	}
 

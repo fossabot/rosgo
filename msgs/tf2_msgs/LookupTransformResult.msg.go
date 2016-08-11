@@ -7,6 +7,7 @@ import (
 	"io"
 
 	"github.com/ppg/rosgo/ros"
+	"github.com/ppg/rosgo/msgs/geometry_msgs"
 )
 
 type _MsgLookupTransformResult struct {
@@ -47,10 +48,6 @@ tf2_msgs/TF2Error error
 type LookupTransformResult struct {
 	Transform geometry_msgs.TransformStamped
 	Error     TF2Error
-}
-
-func (m *LookupTransformResult) Type() ros.MessageType {
-	return MsgLookupTransformResult
 }
 
 func (m *LookupTransformResult) Serialize(w io.Writer) (err error) {

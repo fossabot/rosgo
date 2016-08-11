@@ -50,10 +50,6 @@ type AccelStamped struct {
 	Accel  Accel
 }
 
-func (m *AccelStamped) Type() ros.MessageType {
-	return MsgAccelStamped
-}
-
 func (m *AccelStamped) Serialize(w io.Writer) (err error) {
 	if err = ros.SerializeMessageField(w, "Header", &m.Header); err != nil {
 		return err

@@ -49,10 +49,6 @@ type Polygon struct {
 	Points []Point32
 }
 
-func (m *Polygon) Type() ros.MessageType {
-	return MsgPolygon
-}
-
 func (m *Polygon) Serialize(w io.Writer) (err error) {
 	// Write size little endian
 	err = binary.Write(w, binary.LittleEndian, uint32(len(m.Points)))
@@ -70,15 +66,17 @@ func (m *Polygon) Serialize(w io.Writer) (err error) {
 
 func (m *Polygon) Deserialize(r io.Reader) (err error) {
 	// Points
-	// Read size little endian
-	var size uint32
-	if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
-		return fmt.Errorf("cannot read array size for Points: %s", err)
-	}
-	m.Points = make([]Point32, int(size))
-	for i := 0; i < int(size); i++ {
-		if err = ros.DeserializeMessageField(r, "Point32", &m.Points[i]); err != nil {
-			return err
+	{
+		// Read size little endian
+		var size uint32
+		if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
+			return fmt.Errorf("cannot read array size for Points: %s", err)
+		}
+		m.Points = make([]Point32, int(size))
+		for i := 0; i < int(size); i++ {
+			if err = ros.DeserializeMessageField(r, "Point32", &m.Points[i]); err != nil {
+				return err
+			}
 		}
 	}
 

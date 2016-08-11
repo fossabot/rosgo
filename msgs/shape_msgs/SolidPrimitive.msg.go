@@ -90,10 +90,6 @@ type SolidPrimitive struct {
 	Dimensions []float64
 }
 
-func (m *SolidPrimitive) Type() ros.MessageType {
-	return MsgSolidPrimitive
-}
-
 func (m *SolidPrimitive) Serialize(w io.Writer) (err error) {
 	if err = ros.SerializeMessageField(w, "uint8", &m.Type); err != nil {
 		return err
@@ -120,15 +116,17 @@ func (m *SolidPrimitive) Deserialize(r io.Reader) (err error) {
 	}
 
 	// Dimensions
-	// Read size little endian
-	var size uint32
-	if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
-		return fmt.Errorf("cannot read array size for Dimensions: %s", err)
-	}
-	m.Dimensions = make([]float64, int(size))
-	for i := 0; i < int(size); i++ {
-		if err = ros.DeserializeMessageField(r, "float64", &m.Dimensions[i]); err != nil {
-			return err
+	{
+		// Read size little endian
+		var size uint32
+		if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
+			return fmt.Errorf("cannot read array size for Dimensions: %s", err)
+		}
+		m.Dimensions = make([]float64, int(size))
+		for i := 0; i < int(size); i++ {
+			if err = ros.DeserializeMessageField(r, "float64", &m.Dimensions[i]); err != nil {
+				return err
+			}
 		}
 	}
 

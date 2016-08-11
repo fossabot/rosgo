@@ -9,6 +9,7 @@ import (
 	"fmt"
 
 	"github.com/ppg/rosgo/ros"
+	"github.com/ppg/rosgo/msgs/geometry_msgs"
 	"github.com/ppg/rosgo/msgs/std_msgs"
 )
 
@@ -104,10 +105,6 @@ type Marker struct {
 	Text                     string
 	MeshResource             string
 	MeshUseEmbeddedMaterials bool
-}
-
-func (m *Marker) Type() ros.MessageType {
-	return MsgMarker
 }
 
 func (m *Marker) Serialize(w io.Writer) (err error) {
@@ -240,28 +237,32 @@ func (m *Marker) Deserialize(r io.Reader) (err error) {
 	}
 
 	// Points
-	// Read size little endian
-	var size uint32
-	if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
-		return fmt.Errorf("cannot read array size for Points: %s", err)
-	}
-	m.Points = make([]geometry_msgs.Point, int(size))
-	for i := 0; i < int(size); i++ {
-		if err = ros.DeserializeMessageField(r, "geometry_msgs/Point", &m.Points[i]); err != nil {
-			return err
+	{
+		// Read size little endian
+		var size uint32
+		if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
+			return fmt.Errorf("cannot read array size for Points: %s", err)
+		}
+		m.Points = make([]geometry_msgs.Point, int(size))
+		for i := 0; i < int(size); i++ {
+			if err = ros.DeserializeMessageField(r, "geometry_msgs/Point", &m.Points[i]); err != nil {
+				return err
+			}
 		}
 	}
 
 	// Colors
-	// Read size little endian
-	var size uint32
-	if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
-		return fmt.Errorf("cannot read array size for Colors: %s", err)
-	}
-	m.Colors = make([]std_msgs.ColorRGBA, int(size))
-	for i := 0; i < int(size); i++ {
-		if err = ros.DeserializeMessageField(r, "std_msgs/ColorRGBA", &m.Colors[i]); err != nil {
-			return err
+	{
+		// Read size little endian
+		var size uint32
+		if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
+			return fmt.Errorf("cannot read array size for Colors: %s", err)
+		}
+		m.Colors = make([]std_msgs.ColorRGBA, int(size))
+		for i := 0; i < int(size); i++ {
+			if err = ros.DeserializeMessageField(r, "std_msgs/ColorRGBA", &m.Colors[i]); err != nil {
+				return err
+			}
 		}
 	}
 

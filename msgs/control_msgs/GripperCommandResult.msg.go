@@ -53,10 +53,6 @@ type GripperCommandResult struct {
 	ReachedGoal bool
 }
 
-func (m *GripperCommandResult) Type() ros.MessageType {
-	return MsgGripperCommandResult
-}
-
 func (m *GripperCommandResult) Serialize(w io.Writer) (err error) {
 	if err = ros.SerializeMessageField(w, "float64", &m.Position); err != nil {
 		return err

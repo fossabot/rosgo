@@ -9,6 +9,7 @@ import (
 	"fmt"
 
 	"github.com/ppg/rosgo/ros"
+	"github.com/ppg/rosgo/msgs/trajectory_msgs"
 )
 
 type _MsgFollowJointTrajectoryGoal struct {
@@ -78,10 +79,6 @@ type FollowJointTrajectoryGoal struct {
 	GoalTimeTolerance ros.Duration
 }
 
-func (m *FollowJointTrajectoryGoal) Type() ros.MessageType {
-	return MsgFollowJointTrajectoryGoal
-}
-
 func (m *FollowJointTrajectoryGoal) Serialize(w io.Writer) (err error) {
 	if err = ros.SerializeMessageField(w, "trajectory_msgs/JointTrajectory", &m.Trajectory); err != nil {
 		return err
@@ -123,28 +120,32 @@ func (m *FollowJointTrajectoryGoal) Deserialize(r io.Reader) (err error) {
 	}
 
 	// PathTolerance
-	// Read size little endian
-	var size uint32
-	if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
-		return fmt.Errorf("cannot read array size for PathTolerance: %s", err)
-	}
-	m.PathTolerance = make([]JointTolerance, int(size))
-	for i := 0; i < int(size); i++ {
-		if err = ros.DeserializeMessageField(r, "JointTolerance", &m.PathTolerance[i]); err != nil {
-			return err
+	{
+		// Read size little endian
+		var size uint32
+		if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
+			return fmt.Errorf("cannot read array size for PathTolerance: %s", err)
+		}
+		m.PathTolerance = make([]JointTolerance, int(size))
+		for i := 0; i < int(size); i++ {
+			if err = ros.DeserializeMessageField(r, "JointTolerance", &m.PathTolerance[i]); err != nil {
+				return err
+			}
 		}
 	}
 
 	// GoalTolerance
-	// Read size little endian
-	var size uint32
-	if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
-		return fmt.Errorf("cannot read array size for GoalTolerance: %s", err)
-	}
-	m.GoalTolerance = make([]JointTolerance, int(size))
-	for i := 0; i < int(size); i++ {
-		if err = ros.DeserializeMessageField(r, "JointTolerance", &m.GoalTolerance[i]); err != nil {
-			return err
+	{
+		// Read size little endian
+		var size uint32
+		if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
+			return fmt.Errorf("cannot read array size for GoalTolerance: %s", err)
+		}
+		m.GoalTolerance = make([]JointTolerance, int(size))
+		for i := 0; i < int(size); i++ {
+			if err = ros.DeserializeMessageField(r, "JointTolerance", &m.GoalTolerance[i]); err != nil {
+				return err
+			}
 		}
 	}
 

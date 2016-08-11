@@ -7,6 +7,7 @@ import (
 	"io"
 
 	"github.com/ppg/rosgo/ros"
+	"github.com/ppg/rosgo/msgs/sensor_msgs"
 	"github.com/ppg/rosgo/msgs/std_msgs"
 )
 
@@ -80,10 +81,6 @@ type DisparityImage struct {
 	MinDisparity float32
 	MaxDisparity float32
 	DeltaD       float32
-}
-
-func (m *DisparityImage) Type() ros.MessageType {
-	return MsgDisparityImage
 }
 
 func (m *DisparityImage) Serialize(w io.Writer) (err error) {

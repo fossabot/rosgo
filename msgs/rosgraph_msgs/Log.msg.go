@@ -74,10 +74,6 @@ type Log struct {
 	Topics   []string
 }
 
-func (m *Log) Type() ros.MessageType {
-	return MsgLog
-}
-
 func (m *Log) Serialize(w io.Writer) (err error) {
 	if err = ros.SerializeMessageField(w, "Header", &m.Header); err != nil {
 		return err
@@ -158,15 +154,17 @@ func (m *Log) Deserialize(r io.Reader) (err error) {
 	}
 
 	// Topics
-	// Read size little endian
-	var size uint32
-	if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
-		return fmt.Errorf("cannot read array size for Topics: %s", err)
-	}
-	m.Topics = make([]string, int(size))
-	for i := 0; i < int(size); i++ {
-		if err = ros.DeserializeMessageField(r, "string", &m.Topics[i]); err != nil {
-			return err
+	{
+		// Read size little endian
+		var size uint32
+		if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
+			return fmt.Errorf("cannot read array size for Topics: %s", err)
+		}
+		m.Topics = make([]string, int(size))
+		for i := 0; i < int(size); i++ {
+			if err = ros.DeserializeMessageField(r, "string", &m.Topics[i]); err != nil {
+				return err
+			}
 		}
 	}
 

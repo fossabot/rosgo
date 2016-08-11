@@ -68,10 +68,6 @@ type JointControllerState struct {
 	IClamp          float64
 }
 
-func (m *JointControllerState) Type() ros.MessageType {
-	return MsgJointControllerState
-}
-
 func (m *JointControllerState) Serialize(w io.Writer) (err error) {
 	if err = ros.SerializeMessageField(w, "Header", &m.Header); err != nil {
 		return err

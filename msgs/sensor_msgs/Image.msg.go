@@ -81,10 +81,6 @@ type Image struct {
 	Data        []uint8
 }
 
-func (m *Image) Type() ros.MessageType {
-	return MsgImage
-}
-
 func (m *Image) Serialize(w io.Writer) (err error) {
 	if err = ros.SerializeMessageField(w, "Header", &m.Header); err != nil {
 		return err
@@ -156,15 +152,17 @@ func (m *Image) Deserialize(r io.Reader) (err error) {
 	}
 
 	// Data
-	// Read size little endian
-	var size uint32
-	if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
-		return fmt.Errorf("cannot read array size for Data: %s", err)
-	}
-	m.Data = make([]uint8, int(size))
-	for i := 0; i < int(size); i++ {
-		if err = ros.DeserializeMessageField(r, "uint8", &m.Data[i]); err != nil {
-			return err
+	{
+		// Read size little endian
+		var size uint32
+		if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
+			return fmt.Errorf("cannot read array size for Data: %s", err)
+		}
+		m.Data = make([]uint8, int(size))
+		for i := 0; i < int(size); i++ {
+			if err = ros.DeserializeMessageField(r, "uint8", &m.Data[i]); err != nil {
+				return err
+			}
 		}
 	}
 

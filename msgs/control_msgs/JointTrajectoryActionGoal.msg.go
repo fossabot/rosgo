@@ -7,6 +7,7 @@ import (
 	"io"
 
 	"github.com/ppg/rosgo/ros"
+	"github.com/ppg/rosgo/msgs/actionlib_msgs"
 	"github.com/ppg/rosgo/msgs/std_msgs"
 )
 
@@ -51,10 +52,6 @@ type JointTrajectoryActionGoal struct {
 	Header std_msgs.Header
 	GoalID actionlib_msgs.GoalID
 	Goal   JointTrajectoryGoal
-}
-
-func (m *JointTrajectoryActionGoal) Type() ros.MessageType {
-	return MsgJointTrajectoryActionGoal
 }
 
 func (m *JointTrajectoryActionGoal) Serialize(w io.Writer) (err error) {

@@ -48,10 +48,6 @@ type JoyFeedbackArray struct {
 	Array []JoyFeedback
 }
 
-func (m *JoyFeedbackArray) Type() ros.MessageType {
-	return MsgJoyFeedbackArray
-}
-
 func (m *JoyFeedbackArray) Serialize(w io.Writer) (err error) {
 	// Write size little endian
 	err = binary.Write(w, binary.LittleEndian, uint32(len(m.Array)))
@@ -69,15 +65,17 @@ func (m *JoyFeedbackArray) Serialize(w io.Writer) (err error) {
 
 func (m *JoyFeedbackArray) Deserialize(r io.Reader) (err error) {
 	// Array
-	// Read size little endian
-	var size uint32
-	if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
-		return fmt.Errorf("cannot read array size for Array: %s", err)
-	}
-	m.Array = make([]JoyFeedback, int(size))
-	for i := 0; i < int(size); i++ {
-		if err = ros.DeserializeMessageField(r, "JoyFeedback", &m.Array[i]); err != nil {
-			return err
+	{
+		// Read size little endian
+		var size uint32
+		if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
+			return fmt.Errorf("cannot read array size for Array: %s", err)
+		}
+		m.Array = make([]JoyFeedback, int(size))
+		for i := 0; i < int(size); i++ {
+			if err = ros.DeserializeMessageField(r, "JoyFeedback", &m.Array[i]); err != nil {
+				return err
+			}
 		}
 	}
 

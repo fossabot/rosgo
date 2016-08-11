@@ -7,6 +7,7 @@ import (
 	"io"
 
 	"github.com/ppg/rosgo/ros"
+	"github.com/ppg/rosgo/msgs/geometry_msgs"
 	"github.com/ppg/rosgo/msgs/std_msgs"
 )
 
@@ -54,10 +55,6 @@ type Odometry struct {
 	ChildFrameID string
 	Pose         geometry_msgs.PoseWithCovariance
 	Twist        geometry_msgs.TwistWithCovariance
-}
-
-func (m *Odometry) Type() ros.MessageType {
-	return MsgOdometry
 }
 
 func (m *Odometry) Serialize(w io.Writer) (err error) {

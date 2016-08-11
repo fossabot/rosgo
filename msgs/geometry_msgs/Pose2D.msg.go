@@ -51,10 +51,6 @@ type Pose2D struct {
 	Theta float64
 }
 
-func (m *Pose2D) Type() ros.MessageType {
-	return MsgPose2D
-}
-
 func (m *Pose2D) Serialize(w io.Writer) (err error) {
 	if err = ros.SerializeMessageField(w, "float64", &m.X); err != nil {
 		return err

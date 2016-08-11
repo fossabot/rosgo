@@ -55,10 +55,6 @@ type Plane struct {
 	Coef [4]float64
 }
 
-func (m *Plane) Type() ros.MessageType {
-	return MsgPlane
-}
-
 func (m *Plane) Serialize(w io.Writer) (err error) {
 	// Write size little endian
 	err = binary.Write(w, binary.LittleEndian, uint32(len(m.Coef)))
@@ -76,17 +72,19 @@ func (m *Plane) Serialize(w io.Writer) (err error) {
 
 func (m *Plane) Deserialize(r io.Reader) (err error) {
 	// Coef
-	// Read size little endian
-	var size uint32
-	if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
-		return fmt.Errorf("cannot read array size for Coef: %s", err)
-	}
-	if size > 4 {
-		return fmt.Errorf("array size for Coef too large: expected=4, got=%d", size)
-	}
-	for i := 0; i < int(size); i++ {
-		if err = ros.DeserializeMessageField(r, "float64", &m.Coef[i]); err != nil {
-			return err
+	{
+		// Read size little endian
+		var size uint32
+		if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
+			return fmt.Errorf("cannot read array size for Coef: %s", err)
+		}
+		if size > 4 {
+			return fmt.Errorf("array size for Coef too large: expected=4, got=%d", size)
+		}
+		for i := 0; i < int(size); i++ {
+			if err = ros.DeserializeMessageField(r, "float64", &m.Coef[i]); err != nil {
+				return err
+			}
 		}
 	}
 

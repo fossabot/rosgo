@@ -49,10 +49,6 @@ type Accel struct {
 	Angular Vector3
 }
 
-func (m *Accel) Type() ros.MessageType {
-	return MsgAccel
-}
-
 func (m *Accel) Serialize(w io.Writer) (err error) {
 	if err = ros.SerializeMessageField(w, "Vector3", &m.Linear); err != nil {
 		return err

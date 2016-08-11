@@ -83,10 +83,6 @@ type PointCloud2 struct {
 	IsDense     bool
 }
 
-func (m *PointCloud2) Type() ros.MessageType {
-	return MsgPointCloud2
-}
-
 func (m *PointCloud2) Serialize(w io.Writer) (err error) {
 	if err = ros.SerializeMessageField(w, "Header", &m.Header); err != nil {
 		return err
@@ -158,15 +154,17 @@ func (m *PointCloud2) Deserialize(r io.Reader) (err error) {
 	}
 
 	// Fields
-	// Read size little endian
-	var size uint32
-	if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
-		return fmt.Errorf("cannot read array size for Fields: %s", err)
-	}
-	m.Fields = make([]PointField, int(size))
-	for i := 0; i < int(size); i++ {
-		if err = ros.DeserializeMessageField(r, "PointField", &m.Fields[i]); err != nil {
-			return err
+	{
+		// Read size little endian
+		var size uint32
+		if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
+			return fmt.Errorf("cannot read array size for Fields: %s", err)
+		}
+		m.Fields = make([]PointField, int(size))
+		for i := 0; i < int(size); i++ {
+			if err = ros.DeserializeMessageField(r, "PointField", &m.Fields[i]); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -186,15 +184,17 @@ func (m *PointCloud2) Deserialize(r io.Reader) (err error) {
 	}
 
 	// Data
-	// Read size little endian
-	var size uint32
-	if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
-		return fmt.Errorf("cannot read array size for Data: %s", err)
-	}
-	m.Data = make([]uint8, int(size))
-	for i := 0; i < int(size); i++ {
-		if err = ros.DeserializeMessageField(r, "uint8", &m.Data[i]); err != nil {
-			return err
+	{
+		// Read size little endian
+		var size uint32
+		if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
+			return fmt.Errorf("cannot read array size for Data: %s", err)
+		}
+		m.Data = make([]uint8, int(size))
+		for i := 0; i < int(size); i++ {
+			if err = ros.DeserializeMessageField(r, "uint8", &m.Data[i]); err != nil {
+				return err
+			}
 		}
 	}
 

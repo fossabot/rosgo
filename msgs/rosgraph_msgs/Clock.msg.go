@@ -49,10 +49,6 @@ type Clock struct {
 	Clock ros.Time
 }
 
-func (m *Clock) Type() ros.MessageType {
-	return MsgClock
-}
-
 func (m *Clock) Serialize(w io.Writer) (err error) {
 	if err = ros.SerializeMessageField(w, "time", &m.Clock); err != nil {
 		return err

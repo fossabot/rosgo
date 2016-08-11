@@ -7,6 +7,7 @@ import (
 	"io"
 
 	"github.com/ppg/rosgo/ros"
+	"github.com/ppg/rosgo/msgs/actionlib_msgs"
 	"github.com/ppg/rosgo/msgs/std_msgs"
 )
 
@@ -51,10 +52,6 @@ type GetMapActionFeedback struct {
 	Header   std_msgs.Header
 	Status   actionlib_msgs.GoalStatus
 	Feedback GetMapFeedback
-}
-
-func (m *GetMapActionFeedback) Type() ros.MessageType {
-	return MsgGetMapActionFeedback
 }
 
 func (m *GetMapActionFeedback) Serialize(w io.Writer) (err error) {

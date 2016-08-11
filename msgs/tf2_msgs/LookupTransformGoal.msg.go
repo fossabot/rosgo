@@ -65,10 +65,6 @@ type LookupTransformGoal struct {
 	Advanced    bool
 }
 
-func (m *LookupTransformGoal) Type() ros.MessageType {
-	return MsgLookupTransformGoal
-}
-
 func (m *LookupTransformGoal) Serialize(w io.Writer) (err error) {
 	if err = ros.SerializeMessageField(w, "string", &m.TargetFrame); err != nil {
 		return err

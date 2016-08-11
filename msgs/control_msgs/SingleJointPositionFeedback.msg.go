@@ -55,10 +55,6 @@ type SingleJointPositionFeedback struct {
 	Error    float64
 }
 
-func (m *SingleJointPositionFeedback) Type() ros.MessageType {
-	return MsgSingleJointPositionFeedback
-}
-
 func (m *SingleJointPositionFeedback) Serialize(w io.Writer) (err error) {
 	if err = ros.SerializeMessageField(w, "Header", &m.Header); err != nil {
 		return err

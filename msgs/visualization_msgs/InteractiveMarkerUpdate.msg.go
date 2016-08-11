@@ -83,10 +83,6 @@ type InteractiveMarkerUpdate struct {
 	Erases   []string
 }
 
-func (m *InteractiveMarkerUpdate) Type() ros.MessageType {
-	return MsgInteractiveMarkerUpdate
-}
-
 func (m *InteractiveMarkerUpdate) Serialize(w io.Writer) (err error) {
 	if err = ros.SerializeMessageField(w, "string", &m.ServerID); err != nil {
 		return err
@@ -153,41 +149,47 @@ func (m *InteractiveMarkerUpdate) Deserialize(r io.Reader) (err error) {
 	}
 
 	// Markers
-	// Read size little endian
-	var size uint32
-	if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
-		return fmt.Errorf("cannot read array size for Markers: %s", err)
-	}
-	m.Markers = make([]InteractiveMarker, int(size))
-	for i := 0; i < int(size); i++ {
-		if err = ros.DeserializeMessageField(r, "InteractiveMarker", &m.Markers[i]); err != nil {
-			return err
+	{
+		// Read size little endian
+		var size uint32
+		if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
+			return fmt.Errorf("cannot read array size for Markers: %s", err)
+		}
+		m.Markers = make([]InteractiveMarker, int(size))
+		for i := 0; i < int(size); i++ {
+			if err = ros.DeserializeMessageField(r, "InteractiveMarker", &m.Markers[i]); err != nil {
+				return err
+			}
 		}
 	}
 
 	// Poses
-	// Read size little endian
-	var size uint32
-	if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
-		return fmt.Errorf("cannot read array size for Poses: %s", err)
-	}
-	m.Poses = make([]InteractiveMarkerPose, int(size))
-	for i := 0; i < int(size); i++ {
-		if err = ros.DeserializeMessageField(r, "InteractiveMarkerPose", &m.Poses[i]); err != nil {
-			return err
+	{
+		// Read size little endian
+		var size uint32
+		if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
+			return fmt.Errorf("cannot read array size for Poses: %s", err)
+		}
+		m.Poses = make([]InteractiveMarkerPose, int(size))
+		for i := 0; i < int(size); i++ {
+			if err = ros.DeserializeMessageField(r, "InteractiveMarkerPose", &m.Poses[i]); err != nil {
+				return err
+			}
 		}
 	}
 
 	// Erases
-	// Read size little endian
-	var size uint32
-	if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
-		return fmt.Errorf("cannot read array size for Erases: %s", err)
-	}
-	m.Erases = make([]string, int(size))
-	for i := 0; i < int(size); i++ {
-		if err = ros.DeserializeMessageField(r, "string", &m.Erases[i]); err != nil {
-			return err
+	{
+		// Read size little endian
+		var size uint32
+		if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
+			return fmt.Errorf("cannot read array size for Erases: %s", err)
+		}
+		m.Erases = make([]string, int(size))
+		for i := 0; i < int(size); i++ {
+			if err = ros.DeserializeMessageField(r, "string", &m.Erases[i]); err != nil {
+				return err
+			}
 		}
 	}
 

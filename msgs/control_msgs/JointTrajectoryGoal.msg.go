@@ -7,6 +7,7 @@ import (
 	"io"
 
 	"github.com/ppg/rosgo/ros"
+	"github.com/ppg/rosgo/msgs/trajectory_msgs"
 )
 
 type _MsgJointTrajectoryGoal struct {
@@ -45,10 +46,6 @@ trajectory_msgs/JointTrajectory trajectory
 
 type JointTrajectoryGoal struct {
 	Trajectory trajectory_msgs.JointTrajectory
-}
-
-func (m *JointTrajectoryGoal) Type() ros.MessageType {
-	return MsgJointTrajectoryGoal
 }
 
 func (m *JointTrajectoryGoal) Serialize(w io.Writer) (err error) {

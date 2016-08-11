@@ -49,10 +49,6 @@ type InertiaStamped struct {
 	Inertia Inertia
 }
 
-func (m *InertiaStamped) Type() ros.MessageType {
-	return MsgInertiaStamped
-}
-
 func (m *InertiaStamped) Serialize(w io.Writer) (err error) {
 	if err = ros.SerializeMessageField(w, "Header", &m.Header); err != nil {
 		return err

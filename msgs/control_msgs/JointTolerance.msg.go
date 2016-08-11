@@ -63,10 +63,6 @@ type JointTolerance struct {
 	Acceleration float64
 }
 
-func (m *JointTolerance) Type() ros.MessageType {
-	return MsgJointTolerance
-}
-
 func (m *JointTolerance) Serialize(w io.Writer) (err error) {
 	if err = ros.SerializeMessageField(w, "string", &m.Name); err != nil {
 		return err

@@ -7,6 +7,7 @@ import (
 	"io"
 
 	"github.com/ppg/rosgo/ros"
+	"github.com/ppg/rosgo/msgs/geometry_msgs"
 	"github.com/ppg/rosgo/msgs/std_msgs"
 )
 
@@ -55,10 +56,6 @@ type InteractiveMarkerPose struct {
 	Header std_msgs.Header
 	Pose   geometry_msgs.Pose
 	Name   string
-}
-
-func (m *InteractiveMarkerPose) Type() ros.MessageType {
-	return MsgInteractiveMarkerPose
 }
 
 func (m *InteractiveMarkerPose) Serialize(w io.Writer) (err error) {

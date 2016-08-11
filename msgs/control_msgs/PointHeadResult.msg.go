@@ -45,10 +45,6 @@ var (
 type PointHeadResult struct {
 }
 
-func (m *PointHeadResult) Type() ros.MessageType {
-	return MsgPointHeadResult
-}
-
 func (m *PointHeadResult) Serialize(w io.Writer) (err error) {
 	return
 }

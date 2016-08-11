@@ -100,10 +100,6 @@ type NavSatFix struct {
 	PositionCovarianceType uint8
 }
 
-func (m *NavSatFix) Type() ros.MessageType {
-	return MsgNavSatFix
-}
-
 func (m *NavSatFix) Serialize(w io.Writer) (err error) {
 	if err = ros.SerializeMessageField(w, "Header", &m.Header); err != nil {
 		return err
@@ -170,17 +166,19 @@ func (m *NavSatFix) Deserialize(r io.Reader) (err error) {
 	}
 
 	// PositionCovariance
-	// Read size little endian
-	var size uint32
-	if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
-		return fmt.Errorf("cannot read array size for PositionCovariance: %s", err)
-	}
-	if size > 9 {
-		return fmt.Errorf("array size for PositionCovariance too large: expected=9, got=%d", size)
-	}
-	for i := 0; i < int(size); i++ {
-		if err = ros.DeserializeMessageField(r, "float64", &m.PositionCovariance[i]); err != nil {
-			return err
+	{
+		// Read size little endian
+		var size uint32
+		if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
+			return fmt.Errorf("cannot read array size for PositionCovariance: %s", err)
+		}
+		if size > 9 {
+			return fmt.Errorf("array size for PositionCovariance too large: expected=9, got=%d", size)
+		}
+		for i := 0; i < int(size); i++ {
+			if err = ros.DeserializeMessageField(r, "float64", &m.PositionCovariance[i]); err != nil {
+				return err
+			}
 		}
 	}
 

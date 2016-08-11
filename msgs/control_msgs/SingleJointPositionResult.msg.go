@@ -45,10 +45,6 @@ var (
 type SingleJointPositionResult struct {
 }
 
-func (m *SingleJointPositionResult) Type() ros.MessageType {
-	return MsgSingleJointPositionResult
-}
-
 func (m *SingleJointPositionResult) Serialize(w io.Writer) (err error) {
 	return
 }

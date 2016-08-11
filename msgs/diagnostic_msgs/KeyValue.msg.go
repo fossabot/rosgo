@@ -48,10 +48,6 @@ type KeyValue struct {
 	Value string
 }
 
-func (m *KeyValue) Type() ros.MessageType {
-	return MsgKeyValue
-}
-
 func (m *KeyValue) Serialize(w io.Writer) (err error) {
 	if err = ros.SerializeMessageField(w, "string", &m.Key); err != nil {
 		return err

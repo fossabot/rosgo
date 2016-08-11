@@ -59,10 +59,6 @@ type SmachContainerInitialStatusCmd struct {
 	LocalData     string
 }
 
-func (m *SmachContainerInitialStatusCmd) Type() ros.MessageType {
-	return MsgSmachContainerInitialStatusCmd
-}
-
 func (m *SmachContainerInitialStatusCmd) Serialize(w io.Writer) (err error) {
 	if err = ros.SerializeMessageField(w, "string", &m.Path); err != nil {
 		return err
@@ -93,15 +89,17 @@ func (m *SmachContainerInitialStatusCmd) Deserialize(r io.Reader) (err error) {
 	}
 
 	// InitialStates
-	// Read size little endian
-	var size uint32
-	if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
-		return fmt.Errorf("cannot read array size for InitialStates: %s", err)
-	}
-	m.InitialStates = make([]string, int(size))
-	for i := 0; i < int(size); i++ {
-		if err = ros.DeserializeMessageField(r, "string", &m.InitialStates[i]); err != nil {
-			return err
+	{
+		// Read size little endian
+		var size uint32
+		if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
+			return fmt.Errorf("cannot read array size for InitialStates: %s", err)
+		}
+		m.InitialStates = make([]string, int(size))
+		for i := 0; i < int(size); i++ {
+			if err = ros.DeserializeMessageField(r, "string", &m.InitialStates[i]); err != nil {
+				return err
+			}
 		}
 	}
 

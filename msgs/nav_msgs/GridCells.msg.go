@@ -9,6 +9,7 @@ import (
 	"fmt"
 
 	"github.com/ppg/rosgo/ros"
+	"github.com/ppg/rosgo/msgs/geometry_msgs"
 	"github.com/ppg/rosgo/msgs/std_msgs"
 )
 
@@ -56,10 +57,6 @@ type GridCells struct {
 	Cells      []geometry_msgs.Point
 }
 
-func (m *GridCells) Type() ros.MessageType {
-	return MsgGridCells
-}
-
 func (m *GridCells) Serialize(w io.Writer) (err error) {
 	if err = ros.SerializeMessageField(w, "Header", &m.Header); err != nil {
 		return err
@@ -104,15 +101,17 @@ func (m *GridCells) Deserialize(r io.Reader) (err error) {
 	}
 
 	// Cells
-	// Read size little endian
-	var size uint32
-	if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
-		return fmt.Errorf("cannot read array size for Cells: %s", err)
-	}
-	m.Cells = make([]geometry_msgs.Point, int(size))
-	for i := 0; i < int(size); i++ {
-		if err = ros.DeserializeMessageField(r, "geometry_msgs/Point", &m.Cells[i]); err != nil {
-			return err
+	{
+		// Read size little endian
+		var size uint32
+		if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
+			return fmt.Errorf("cannot read array size for Cells: %s", err)
+		}
+		m.Cells = make([]geometry_msgs.Point, int(size))
+		for i := 0; i < int(size); i++ {
+			if err = ros.DeserializeMessageField(r, "geometry_msgs/Point", &m.Cells[i]); err != nil {
+				return err
+			}
 		}
 	}
 

@@ -9,6 +9,7 @@ import (
 	"fmt"
 
 	"github.com/ppg/rosgo/ros"
+	"github.com/ppg/rosgo/msgs/geometry_msgs"
 	"github.com/ppg/rosgo/msgs/std_msgs"
 )
 
@@ -78,10 +79,6 @@ type MultiDOFJointState struct {
 	Wrench     []geometry_msgs.Wrench
 }
 
-func (m *MultiDOFJointState) Type() ros.MessageType {
-	return MsgMultiDOFJointState
-}
-
 func (m *MultiDOFJointState) Serialize(w io.Writer) (err error) {
 	if err = ros.SerializeMessageField(w, "Header", &m.Header); err != nil {
 		return err
@@ -141,54 +138,62 @@ func (m *MultiDOFJointState) Deserialize(r io.Reader) (err error) {
 	}
 
 	// JointNames
-	// Read size little endian
-	var size uint32
-	if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
-		return fmt.Errorf("cannot read array size for JointNames: %s", err)
-	}
-	m.JointNames = make([]string, int(size))
-	for i := 0; i < int(size); i++ {
-		if err = ros.DeserializeMessageField(r, "string", &m.JointNames[i]); err != nil {
-			return err
+	{
+		// Read size little endian
+		var size uint32
+		if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
+			return fmt.Errorf("cannot read array size for JointNames: %s", err)
+		}
+		m.JointNames = make([]string, int(size))
+		for i := 0; i < int(size); i++ {
+			if err = ros.DeserializeMessageField(r, "string", &m.JointNames[i]); err != nil {
+				return err
+			}
 		}
 	}
 
 	// Transforms
-	// Read size little endian
-	var size uint32
-	if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
-		return fmt.Errorf("cannot read array size for Transforms: %s", err)
-	}
-	m.Transforms = make([]geometry_msgs.Transform, int(size))
-	for i := 0; i < int(size); i++ {
-		if err = ros.DeserializeMessageField(r, "geometry_msgs/Transform", &m.Transforms[i]); err != nil {
-			return err
+	{
+		// Read size little endian
+		var size uint32
+		if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
+			return fmt.Errorf("cannot read array size for Transforms: %s", err)
+		}
+		m.Transforms = make([]geometry_msgs.Transform, int(size))
+		for i := 0; i < int(size); i++ {
+			if err = ros.DeserializeMessageField(r, "geometry_msgs/Transform", &m.Transforms[i]); err != nil {
+				return err
+			}
 		}
 	}
 
 	// Twist
-	// Read size little endian
-	var size uint32
-	if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
-		return fmt.Errorf("cannot read array size for Twist: %s", err)
-	}
-	m.Twist = make([]geometry_msgs.Twist, int(size))
-	for i := 0; i < int(size); i++ {
-		if err = ros.DeserializeMessageField(r, "geometry_msgs/Twist", &m.Twist[i]); err != nil {
-			return err
+	{
+		// Read size little endian
+		var size uint32
+		if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
+			return fmt.Errorf("cannot read array size for Twist: %s", err)
+		}
+		m.Twist = make([]geometry_msgs.Twist, int(size))
+		for i := 0; i < int(size); i++ {
+			if err = ros.DeserializeMessageField(r, "geometry_msgs/Twist", &m.Twist[i]); err != nil {
+				return err
+			}
 		}
 	}
 
 	// Wrench
-	// Read size little endian
-	var size uint32
-	if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
-		return fmt.Errorf("cannot read array size for Wrench: %s", err)
-	}
-	m.Wrench = make([]geometry_msgs.Wrench, int(size))
-	for i := 0; i < int(size); i++ {
-		if err = ros.DeserializeMessageField(r, "geometry_msgs/Wrench", &m.Wrench[i]); err != nil {
-			return err
+	{
+		// Read size little endian
+		var size uint32
+		if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
+			return fmt.Errorf("cannot read array size for Wrench: %s", err)
+		}
+		m.Wrench = make([]geometry_msgs.Wrench, int(size))
+		for i := 0; i < int(size); i++ {
+			if err = ros.DeserializeMessageField(r, "geometry_msgs/Wrench", &m.Wrench[i]); err != nil {
+				return err
+			}
 		}
 	}
 

@@ -57,10 +57,6 @@ type Point32 struct {
 	Z float32
 }
 
-func (m *Point32) Type() ros.MessageType {
-	return MsgPoint32
-}
-
 func (m *Point32) Serialize(w io.Writer) (err error) {
 	if err = ros.SerializeMessageField(w, "float32", &m.X); err != nil {
 		return err

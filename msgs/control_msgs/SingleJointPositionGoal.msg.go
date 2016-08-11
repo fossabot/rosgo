@@ -51,10 +51,6 @@ type SingleJointPositionGoal struct {
 	MaxVelocity float64
 }
 
-func (m *SingleJointPositionGoal) Type() ros.MessageType {
-	return MsgSingleJointPositionGoal
-}
-
 func (m *SingleJointPositionGoal) Serialize(w io.Writer) (err error) {
 	if err = ros.SerializeMessageField(w, "float64", &m.Position); err != nil {
 		return err

@@ -55,10 +55,6 @@ type Temperature struct {
 	Variance    float64
 }
 
-func (m *Temperature) Type() ros.MessageType {
-	return MsgTemperature
-}
-
 func (m *Temperature) Serialize(w io.Writer) (err error) {
 	if err = ros.SerializeMessageField(w, "Header", &m.Header); err != nil {
 		return err

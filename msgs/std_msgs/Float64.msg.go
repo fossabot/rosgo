@@ -45,10 +45,6 @@ type Float64 struct {
 	Data float64
 }
 
-func (m *Float64) Type() ros.MessageType {
-	return MsgFloat64
-}
-
 func (m *Float64) Serialize(w io.Writer) (err error) {
 	if err = ros.SerializeMessageField(w, "float64", &m.Data); err != nil {
 		return err

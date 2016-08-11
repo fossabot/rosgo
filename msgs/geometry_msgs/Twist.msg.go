@@ -49,10 +49,6 @@ type Twist struct {
 	Angular Vector3
 }
 
-func (m *Twist) Type() ros.MessageType {
-	return MsgTwist
-}
-
 func (m *Twist) Serialize(w io.Writer) (err error) {
 	if err = ros.SerializeMessageField(w, "Vector3", &m.Linear); err != nil {
 		return err

@@ -50,10 +50,6 @@ type AccelWithCovarianceStamped struct {
 	Accel  AccelWithCovariance
 }
 
-func (m *AccelWithCovarianceStamped) Type() ros.MessageType {
-	return MsgAccelWithCovarianceStamped
-}
-
 func (m *AccelWithCovarianceStamped) Serialize(w io.Writer) (err error) {
 	if err = ros.SerializeMessageField(w, "Header", &m.Header); err != nil {
 		return err

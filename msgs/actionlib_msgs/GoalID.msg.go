@@ -56,10 +56,6 @@ type GoalID struct {
 	ID    string
 }
 
-func (m *GoalID) Type() ros.MessageType {
-	return MsgGoalID
-}
-
 func (m *GoalID) Serialize(w io.Writer) (err error) {
 	if err = ros.SerializeMessageField(w, "time", &m.Stamp); err != nil {
 		return err

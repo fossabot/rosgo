@@ -60,10 +60,6 @@ type JointTrajectoryPoint struct {
 	TimeFromStart ros.Duration
 }
 
-func (m *JointTrajectoryPoint) Type() ros.MessageType {
-	return MsgJointTrajectoryPoint
-}
-
 func (m *JointTrajectoryPoint) Serialize(w io.Writer) (err error) {
 	// Write size little endian
 	err = binary.Write(w, binary.LittleEndian, uint32(len(m.Positions)))
@@ -118,54 +114,62 @@ func (m *JointTrajectoryPoint) Serialize(w io.Writer) (err error) {
 
 func (m *JointTrajectoryPoint) Deserialize(r io.Reader) (err error) {
 	// Positions
-	// Read size little endian
-	var size uint32
-	if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
-		return fmt.Errorf("cannot read array size for Positions: %s", err)
-	}
-	m.Positions = make([]float64, int(size))
-	for i := 0; i < int(size); i++ {
-		if err = ros.DeserializeMessageField(r, "float64", &m.Positions[i]); err != nil {
-			return err
+	{
+		// Read size little endian
+		var size uint32
+		if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
+			return fmt.Errorf("cannot read array size for Positions: %s", err)
+		}
+		m.Positions = make([]float64, int(size))
+		for i := 0; i < int(size); i++ {
+			if err = ros.DeserializeMessageField(r, "float64", &m.Positions[i]); err != nil {
+				return err
+			}
 		}
 	}
 
 	// Velocities
-	// Read size little endian
-	var size uint32
-	if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
-		return fmt.Errorf("cannot read array size for Velocities: %s", err)
-	}
-	m.Velocities = make([]float64, int(size))
-	for i := 0; i < int(size); i++ {
-		if err = ros.DeserializeMessageField(r, "float64", &m.Velocities[i]); err != nil {
-			return err
+	{
+		// Read size little endian
+		var size uint32
+		if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
+			return fmt.Errorf("cannot read array size for Velocities: %s", err)
+		}
+		m.Velocities = make([]float64, int(size))
+		for i := 0; i < int(size); i++ {
+			if err = ros.DeserializeMessageField(r, "float64", &m.Velocities[i]); err != nil {
+				return err
+			}
 		}
 	}
 
 	// Accelerations
-	// Read size little endian
-	var size uint32
-	if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
-		return fmt.Errorf("cannot read array size for Accelerations: %s", err)
-	}
-	m.Accelerations = make([]float64, int(size))
-	for i := 0; i < int(size); i++ {
-		if err = ros.DeserializeMessageField(r, "float64", &m.Accelerations[i]); err != nil {
-			return err
+	{
+		// Read size little endian
+		var size uint32
+		if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
+			return fmt.Errorf("cannot read array size for Accelerations: %s", err)
+		}
+		m.Accelerations = make([]float64, int(size))
+		for i := 0; i < int(size); i++ {
+			if err = ros.DeserializeMessageField(r, "float64", &m.Accelerations[i]); err != nil {
+				return err
+			}
 		}
 	}
 
 	// Effort
-	// Read size little endian
-	var size uint32
-	if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
-		return fmt.Errorf("cannot read array size for Effort: %s", err)
-	}
-	m.Effort = make([]float64, int(size))
-	for i := 0; i < int(size); i++ {
-		if err = ros.DeserializeMessageField(r, "float64", &m.Effort[i]); err != nil {
-			return err
+	{
+		// Read size little endian
+		var size uint32
+		if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
+			return fmt.Errorf("cannot read array size for Effort: %s", err)
+		}
+		m.Effort = make([]float64, int(size))
+		for i := 0; i < int(size); i++ {
+			if err = ros.DeserializeMessageField(r, "float64", &m.Effort[i]); err != nil {
+				return err
+			}
 		}
 	}
 

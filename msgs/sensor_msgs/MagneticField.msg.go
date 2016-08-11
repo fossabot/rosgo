@@ -9,6 +9,7 @@ import (
 	"fmt"
 
 	"github.com/ppg/rosgo/ros"
+	"github.com/ppg/rosgo/msgs/geometry_msgs"
 	"github.com/ppg/rosgo/msgs/std_msgs"
 )
 
@@ -71,10 +72,6 @@ type MagneticField struct {
 	MagneticFieldCovariance [9]float64
 }
 
-func (m *MagneticField) Type() ros.MessageType {
-	return MsgMagneticField
-}
-
 func (m *MagneticField) Serialize(w io.Writer) (err error) {
 	if err = ros.SerializeMessageField(w, "Header", &m.Header); err != nil {
 		return err
@@ -110,17 +107,19 @@ func (m *MagneticField) Deserialize(r io.Reader) (err error) {
 	}
 
 	// MagneticFieldCovariance
-	// Read size little endian
-	var size uint32
-	if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
-		return fmt.Errorf("cannot read array size for MagneticFieldCovariance: %s", err)
-	}
-	if size > 9 {
-		return fmt.Errorf("array size for MagneticFieldCovariance too large: expected=9, got=%d", size)
-	}
-	for i := 0; i < int(size); i++ {
-		if err = ros.DeserializeMessageField(r, "float64", &m.MagneticFieldCovariance[i]); err != nil {
-			return err
+	{
+		// Read size little endian
+		var size uint32
+		if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
+			return fmt.Errorf("cannot read array size for MagneticFieldCovariance: %s", err)
+		}
+		if size > 9 {
+			return fmt.Errorf("array size for MagneticFieldCovariance too large: expected=9, got=%d", size)
+		}
+		for i := 0; i < int(size); i++ {
+			if err = ros.DeserializeMessageField(r, "float64", &m.MagneticFieldCovariance[i]); err != nil {
+				return err
+			}
 		}
 	}
 

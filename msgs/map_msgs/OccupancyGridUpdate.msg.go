@@ -59,10 +59,6 @@ type OccupancyGridUpdate struct {
 	Data   []int8
 }
 
-func (m *OccupancyGridUpdate) Type() ros.MessageType {
-	return MsgOccupancyGridUpdate
-}
-
 func (m *OccupancyGridUpdate) Serialize(w io.Writer) (err error) {
 	if err = ros.SerializeMessageField(w, "Header", &m.Header); err != nil {
 		return err
@@ -125,15 +121,17 @@ func (m *OccupancyGridUpdate) Deserialize(r io.Reader) (err error) {
 	}
 
 	// Data
-	// Read size little endian
-	var size uint32
-	if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
-		return fmt.Errorf("cannot read array size for Data: %s", err)
-	}
-	m.Data = make([]int8, int(size))
-	for i := 0; i < int(size); i++ {
-		if err = ros.DeserializeMessageField(r, "int8", &m.Data[i]); err != nil {
-			return err
+	{
+		// Read size little endian
+		var size uint32
+		if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
+			return fmt.Errorf("cannot read array size for Data: %s", err)
+		}
+		m.Data = make([]int8, int(size))
+		for i := 0; i < int(size); i++ {
+			if err = ros.DeserializeMessageField(r, "int8", &m.Data[i]); err != nil {
+				return err
+			}
 		}
 	}
 

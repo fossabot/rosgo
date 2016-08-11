@@ -70,10 +70,6 @@ type GoalStatus struct {
 	Text   string
 }
 
-func (m *GoalStatus) Type() ros.MessageType {
-	return MsgGoalStatus
-}
-
 func (m *GoalStatus) Serialize(w io.Writer) (err error) {
 	if err = ros.SerializeMessageField(w, "GoalID", &m.GoalID); err != nil {
 		return err

@@ -54,10 +54,6 @@ type Joy struct {
 	Buttons []int32
 }
 
-func (m *Joy) Type() ros.MessageType {
-	return MsgJoy
-}
-
 func (m *Joy) Serialize(w io.Writer) (err error) {
 	if err = ros.SerializeMessageField(w, "Header", &m.Header); err != nil {
 		return err
@@ -95,28 +91,32 @@ func (m *Joy) Deserialize(r io.Reader) (err error) {
 	}
 
 	// Axes
-	// Read size little endian
-	var size uint32
-	if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
-		return fmt.Errorf("cannot read array size for Axes: %s", err)
-	}
-	m.Axes = make([]float32, int(size))
-	for i := 0; i < int(size); i++ {
-		if err = ros.DeserializeMessageField(r, "float32", &m.Axes[i]); err != nil {
-			return err
+	{
+		// Read size little endian
+		var size uint32
+		if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
+			return fmt.Errorf("cannot read array size for Axes: %s", err)
+		}
+		m.Axes = make([]float32, int(size))
+		for i := 0; i < int(size); i++ {
+			if err = ros.DeserializeMessageField(r, "float32", &m.Axes[i]); err != nil {
+				return err
+			}
 		}
 	}
 
 	// Buttons
-	// Read size little endian
-	var size uint32
-	if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
-		return fmt.Errorf("cannot read array size for Buttons: %s", err)
-	}
-	m.Buttons = make([]int32, int(size))
-	for i := 0; i < int(size); i++ {
-		if err = ros.DeserializeMessageField(r, "int32", &m.Buttons[i]); err != nil {
-			return err
+	{
+		// Read size little endian
+		var size uint32
+		if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
+			return fmt.Errorf("cannot read array size for Buttons: %s", err)
+		}
+		m.Buttons = make([]int32, int(size))
+		for i := 0; i < int(size); i++ {
+			if err = ros.DeserializeMessageField(r, "int32", &m.Buttons[i]); err != nil {
+				return err
+			}
 		}
 	}
 

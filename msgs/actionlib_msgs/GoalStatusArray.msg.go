@@ -54,10 +54,6 @@ type GoalStatusArray struct {
 	StatusList []GoalStatus
 }
 
-func (m *GoalStatusArray) Type() ros.MessageType {
-	return MsgGoalStatusArray
-}
-
 func (m *GoalStatusArray) Serialize(w io.Writer) (err error) {
 	if err = ros.SerializeMessageField(w, "Header", &m.Header); err != nil {
 		return err
@@ -84,15 +80,17 @@ func (m *GoalStatusArray) Deserialize(r io.Reader) (err error) {
 	}
 
 	// StatusList
-	// Read size little endian
-	var size uint32
-	if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
-		return fmt.Errorf("cannot read array size for StatusList: %s", err)
-	}
-	m.StatusList = make([]GoalStatus, int(size))
-	for i := 0; i < int(size); i++ {
-		if err = ros.DeserializeMessageField(r, "GoalStatus", &m.StatusList[i]); err != nil {
-			return err
+	{
+		// Read size little endian
+		var size uint32
+		if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
+			return fmt.Errorf("cannot read array size for StatusList: %s", err)
+		}
+		m.StatusList = make([]GoalStatus, int(size))
+		for i := 0; i < int(size); i++ {
+			if err = ros.DeserializeMessageField(r, "GoalStatus", &m.StatusList[i]); err != nil {
+				return err
+			}
 		}
 	}
 

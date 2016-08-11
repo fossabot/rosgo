@@ -56,10 +56,6 @@ type Vector3 struct {
 	Z float64
 }
 
-func (m *Vector3) Type() ros.MessageType {
-	return MsgVector3
-}
-
 func (m *Vector3) Serialize(w io.Writer) (err error) {
 	if err = ros.SerializeMessageField(w, "float64", &m.X); err != nil {
 		return err

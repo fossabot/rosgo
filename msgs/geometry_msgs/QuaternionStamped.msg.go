@@ -51,10 +51,6 @@ type QuaternionStamped struct {
 	Quaternion Quaternion
 }
 
-func (m *QuaternionStamped) Type() ros.MessageType {
-	return MsgQuaternionStamped
-}
-
 func (m *QuaternionStamped) Serialize(w io.Writer) (err error) {
 	if err = ros.SerializeMessageField(w, "Header", &m.Header); err != nil {
 		return err

@@ -71,10 +71,6 @@ type SmachContainerStatus struct {
 	Info          string
 }
 
-func (m *SmachContainerStatus) Type() ros.MessageType {
-	return MsgSmachContainerStatus
-}
-
 func (m *SmachContainerStatus) Serialize(w io.Writer) (err error) {
 	if err = ros.SerializeMessageField(w, "Header", &m.Header); err != nil {
 		return err
@@ -129,28 +125,32 @@ func (m *SmachContainerStatus) Deserialize(r io.Reader) (err error) {
 	}
 
 	// InitialStates
-	// Read size little endian
-	var size uint32
-	if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
-		return fmt.Errorf("cannot read array size for InitialStates: %s", err)
-	}
-	m.InitialStates = make([]string, int(size))
-	for i := 0; i < int(size); i++ {
-		if err = ros.DeserializeMessageField(r, "string", &m.InitialStates[i]); err != nil {
-			return err
+	{
+		// Read size little endian
+		var size uint32
+		if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
+			return fmt.Errorf("cannot read array size for InitialStates: %s", err)
+		}
+		m.InitialStates = make([]string, int(size))
+		for i := 0; i < int(size); i++ {
+			if err = ros.DeserializeMessageField(r, "string", &m.InitialStates[i]); err != nil {
+				return err
+			}
 		}
 	}
 
 	// ActiveStates
-	// Read size little endian
-	var size uint32
-	if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
-		return fmt.Errorf("cannot read array size for ActiveStates: %s", err)
-	}
-	m.ActiveStates = make([]string, int(size))
-	for i := 0; i < int(size); i++ {
-		if err = ros.DeserializeMessageField(r, "string", &m.ActiveStates[i]); err != nil {
-			return err
+	{
+		// Read size little endian
+		var size uint32
+		if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
+			return fmt.Errorf("cannot read array size for ActiveStates: %s", err)
+		}
+		m.ActiveStates = make([]string, int(size))
+		for i := 0; i < int(size); i++ {
+			if err = ros.DeserializeMessageField(r, "string", &m.ActiveStates[i]); err != nil {
+				return err
+			}
 		}
 	}
 

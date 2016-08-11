@@ -54,10 +54,6 @@ type PoseArray struct {
 	Poses  []Pose
 }
 
-func (m *PoseArray) Type() ros.MessageType {
-	return MsgPoseArray
-}
-
 func (m *PoseArray) Serialize(w io.Writer) (err error) {
 	if err = ros.SerializeMessageField(w, "Header", &m.Header); err != nil {
 		return err
@@ -84,15 +80,17 @@ func (m *PoseArray) Deserialize(r io.Reader) (err error) {
 	}
 
 	// Poses
-	// Read size little endian
-	var size uint32
-	if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
-		return fmt.Errorf("cannot read array size for Poses: %s", err)
-	}
-	m.Poses = make([]Pose, int(size))
-	for i := 0; i < int(size); i++ {
-		if err = ros.DeserializeMessageField(r, "Pose", &m.Poses[i]); err != nil {
-			return err
+	{
+		// Read size little endian
+		var size uint32
+		if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
+			return fmt.Errorf("cannot read array size for Poses: %s", err)
+		}
+		m.Poses = make([]Pose, int(size))
+		for i := 0; i < int(size); i++ {
+			if err = ros.DeserializeMessageField(r, "Pose", &m.Poses[i]); err != nil {
+				return err
+			}
 		}
 	}
 

@@ -7,6 +7,7 @@ import (
 	"io"
 
 	"github.com/ppg/rosgo/ros"
+	"github.com/ppg/rosgo/msgs/geometry_msgs"
 )
 
 type _MsgMapMetaData struct {
@@ -59,10 +60,6 @@ type MapMetaData struct {
 	Width       uint32
 	Height      uint32
 	Origin      geometry_msgs.Pose
-}
-
-func (m *MapMetaData) Type() ros.MessageType {
-	return MsgMapMetaData
 }
 
 func (m *MapMetaData) Serialize(w io.Writer) (err error) {

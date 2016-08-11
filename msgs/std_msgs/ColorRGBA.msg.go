@@ -52,10 +52,6 @@ type ColorRGBA struct {
 	A float32
 }
 
-func (m *ColorRGBA) Type() ros.MessageType {
-	return MsgColorRGBA
-}
-
 func (m *ColorRGBA) Serialize(w io.Writer) (err error) {
 	if err = ros.SerializeMessageField(w, "float32", &m.R); err != nil {
 		return err

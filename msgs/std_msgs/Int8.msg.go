@@ -46,10 +46,6 @@ type Int8 struct {
 	Data int8
 }
 
-func (m *Int8) Type() ros.MessageType {
-	return MsgInt8
-}
-
 func (m *Int8) Serialize(w io.Writer) (err error) {
 	if err = ros.SerializeMessageField(w, "int8", &m.Data); err != nil {
 		return err

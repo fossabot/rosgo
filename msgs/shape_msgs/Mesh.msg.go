@@ -9,6 +9,7 @@ import (
 	"fmt"
 
 	"github.com/ppg/rosgo/ros"
+	"github.com/ppg/rosgo/msgs/geometry_msgs"
 )
 
 type _MsgMesh struct {
@@ -55,10 +56,6 @@ type Mesh struct {
 	Vertices  []geometry_msgs.Point
 }
 
-func (m *Mesh) Type() ros.MessageType {
-	return MsgMesh
-}
-
 func (m *Mesh) Serialize(w io.Writer) (err error) {
 	// Write size little endian
 	err = binary.Write(w, binary.LittleEndian, uint32(len(m.Triangles)))
@@ -87,28 +84,32 @@ func (m *Mesh) Serialize(w io.Writer) (err error) {
 
 func (m *Mesh) Deserialize(r io.Reader) (err error) {
 	// Triangles
-	// Read size little endian
-	var size uint32
-	if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
-		return fmt.Errorf("cannot read array size for Triangles: %s", err)
-	}
-	m.Triangles = make([]MeshTriangle, int(size))
-	for i := 0; i < int(size); i++ {
-		if err = ros.DeserializeMessageField(r, "MeshTriangle", &m.Triangles[i]); err != nil {
-			return err
+	{
+		// Read size little endian
+		var size uint32
+		if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
+			return fmt.Errorf("cannot read array size for Triangles: %s", err)
+		}
+		m.Triangles = make([]MeshTriangle, int(size))
+		for i := 0; i < int(size); i++ {
+			if err = ros.DeserializeMessageField(r, "MeshTriangle", &m.Triangles[i]); err != nil {
+				return err
+			}
 		}
 	}
 
 	// Vertices
-	// Read size little endian
-	var size uint32
-	if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
-		return fmt.Errorf("cannot read array size for Vertices: %s", err)
-	}
-	m.Vertices = make([]geometry_msgs.Point, int(size))
-	for i := 0; i < int(size); i++ {
-		if err = ros.DeserializeMessageField(r, "geometry_msgs/Point", &m.Vertices[i]); err != nil {
-			return err
+	{
+		// Read size little endian
+		var size uint32
+		if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
+			return fmt.Errorf("cannot read array size for Vertices: %s", err)
+		}
+		m.Vertices = make([]geometry_msgs.Point, int(size))
+		for i := 0; i < int(size); i++ {
+			if err = ros.DeserializeMessageField(r, "geometry_msgs/Point", &m.Vertices[i]); err != nil {
+				return err
+			}
 		}
 	}
 

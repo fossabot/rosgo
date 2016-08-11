@@ -10,6 +10,7 @@ import (
 
 	"github.com/ppg/rosgo/ros"
 	"github.com/ppg/rosgo/msgs/std_msgs"
+	"github.com/ppg/rosgo/msgs/trajectory_msgs"
 )
 
 type _MsgJointTrajectoryControllerState struct {
@@ -57,10 +58,6 @@ type JointTrajectoryControllerState struct {
 	Error      trajectory_msgs.JointTrajectoryPoint
 }
 
-func (m *JointTrajectoryControllerState) Type() ros.MessageType {
-	return MsgJointTrajectoryControllerState
-}
-
 func (m *JointTrajectoryControllerState) Serialize(w io.Writer) (err error) {
 	if err = ros.SerializeMessageField(w, "Header", &m.Header); err != nil {
 		return err
@@ -99,15 +96,17 @@ func (m *JointTrajectoryControllerState) Deserialize(r io.Reader) (err error) {
 	}
 
 	// JointNames
-	// Read size little endian
-	var size uint32
-	if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
-		return fmt.Errorf("cannot read array size for JointNames: %s", err)
-	}
-	m.JointNames = make([]string, int(size))
-	for i := 0; i < int(size); i++ {
-		if err = ros.DeserializeMessageField(r, "string", &m.JointNames[i]); err != nil {
-			return err
+	{
+		// Read size little endian
+		var size uint32
+		if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
+			return fmt.Errorf("cannot read array size for JointNames: %s", err)
+		}
+		m.JointNames = make([]string, int(size))
+		for i := 0; i < int(size); i++ {
+			if err = ros.DeserializeMessageField(r, "string", &m.JointNames[i]); err != nil {
+				return err
+			}
 		}
 	}
 

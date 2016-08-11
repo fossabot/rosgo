@@ -90,10 +90,6 @@ type Range struct {
 	Range         float32
 }
 
-func (m *Range) Type() ros.MessageType {
-	return MsgRange
-}
-
 func (m *Range) Serialize(w io.Writer) (err error) {
 	if err = ros.SerializeMessageField(w, "Header", &m.Header); err != nil {
 		return err

@@ -52,10 +52,6 @@ type GetMapAction struct {
 	ActionFeedback GetMapActionFeedback
 }
 
-func (m *GetMapAction) Type() ros.MessageType {
-	return MsgGetMapAction
-}
-
 func (m *GetMapAction) Serialize(w io.Writer) (err error) {
 	if err = ros.SerializeMessageField(w, "GetMapActionGoal", &m.ActionGoal); err != nil {
 		return err

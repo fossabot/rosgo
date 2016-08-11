@@ -62,10 +62,6 @@ type JoyFeedback struct {
 	Intensity float32
 }
 
-func (m *JoyFeedback) Type() ros.MessageType {
-	return MsgJoyFeedback
-}
-
 func (m *JoyFeedback) Serialize(w io.Writer) (err error) {
 	if err = ros.SerializeMessageField(w, "uint8", &m.Type); err != nil {
 		return err

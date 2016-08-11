@@ -50,10 +50,6 @@ type Transform struct {
 	Rotation    Quaternion
 }
 
-func (m *Transform) Type() ros.MessageType {
-	return MsgTransform
-}
-
 func (m *Transform) Serialize(w io.Writer) (err error) {
 	if err = ros.SerializeMessageField(w, "Vector3", &m.Translation); err != nil {
 		return err

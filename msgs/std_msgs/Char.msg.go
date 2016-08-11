@@ -45,10 +45,6 @@ type Char struct {
 	Data uint8
 }
 
-func (m *Char) Type() ros.MessageType {
-	return MsgChar
-}
-
 func (m *Char) Serialize(w io.Writer) (err error) {
 	if err = ros.SerializeMessageField(w, "char", &m.Data); err != nil {
 		return err

@@ -47,10 +47,6 @@ type GripperCommandGoal struct {
 	Command GripperCommand
 }
 
-func (m *GripperCommandGoal) Type() ros.MessageType {
-	return MsgGripperCommandGoal
-}
-
 func (m *GripperCommandGoal) Serialize(w io.Writer) (err error) {
 	if err = ros.SerializeMessageField(w, "GripperCommand", &m.Command); err != nil {
 		return err

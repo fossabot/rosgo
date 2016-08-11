@@ -46,10 +46,6 @@ type Byte struct {
 	Data int8
 }
 
-func (m *Byte) Type() ros.MessageType {
-	return MsgByte
-}
-
 func (m *Byte) Serialize(w io.Writer) (err error) {
 	if err = ros.SerializeMessageField(w, "byte", &m.Data); err != nil {
 		return err

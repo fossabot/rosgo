@@ -57,10 +57,6 @@ type PoseWithCovariance struct {
 	Covariance [36]float64
 }
 
-func (m *PoseWithCovariance) Type() ros.MessageType {
-	return MsgPoseWithCovariance
-}
-
 func (m *PoseWithCovariance) Serialize(w io.Writer) (err error) {
 	if err = ros.SerializeMessageField(w, "Pose", &m.Pose); err != nil {
 		return err
@@ -87,17 +83,19 @@ func (m *PoseWithCovariance) Deserialize(r io.Reader) (err error) {
 	}
 
 	// Covariance
-	// Read size little endian
-	var size uint32
-	if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
-		return fmt.Errorf("cannot read array size for Covariance: %s", err)
-	}
-	if size > 36 {
-		return fmt.Errorf("array size for Covariance too large: expected=36, got=%d", size)
-	}
-	for i := 0; i < int(size); i++ {
-		if err = ros.DeserializeMessageField(r, "float64", &m.Covariance[i]); err != nil {
-			return err
+	{
+		// Read size little endian
+		var size uint32
+		if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
+			return fmt.Errorf("cannot read array size for Covariance: %s", err)
+		}
+		if size > 36 {
+			return fmt.Errorf("array size for Covariance too large: expected=36, got=%d", size)
+		}
+		for i := 0; i < int(size); i++ {
+			if err = ros.DeserializeMessageField(r, "float64", &m.Covariance[i]); err != nil {
+				return err
+			}
 		}
 	}
 

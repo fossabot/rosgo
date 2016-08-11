@@ -52,10 +52,6 @@ type FollowJointTrajectoryAction struct {
 	ActionFeedback FollowJointTrajectoryActionFeedback
 }
 
-func (m *FollowJointTrajectoryAction) Type() ros.MessageType {
-	return MsgFollowJointTrajectoryAction
-}
-
 func (m *FollowJointTrajectoryAction) Serialize(w io.Writer) (err error) {
 	if err = ros.SerializeMessageField(w, "FollowJointTrajectoryActionGoal", &m.ActionGoal); err != nil {
 		return err

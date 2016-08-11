@@ -9,6 +9,7 @@ import (
 	"fmt"
 
 	"github.com/ppg/rosgo/ros"
+	"github.com/ppg/rosgo/msgs/geometry_msgs"
 	"github.com/ppg/rosgo/msgs/std_msgs"
 )
 
@@ -78,10 +79,6 @@ type InteractiveMarker struct {
 	Scale       float32
 	MenuEntries []MenuEntry
 	Controls    []InteractiveMarkerControl
-}
-
-func (m *InteractiveMarker) Type() ros.MessageType {
-	return MsgInteractiveMarker
 }
 
 func (m *InteractiveMarker) Serialize(w io.Writer) (err error) {
@@ -157,28 +154,32 @@ func (m *InteractiveMarker) Deserialize(r io.Reader) (err error) {
 	}
 
 	// MenuEntries
-	// Read size little endian
-	var size uint32
-	if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
-		return fmt.Errorf("cannot read array size for MenuEntries: %s", err)
-	}
-	m.MenuEntries = make([]MenuEntry, int(size))
-	for i := 0; i < int(size); i++ {
-		if err = ros.DeserializeMessageField(r, "MenuEntry", &m.MenuEntries[i]); err != nil {
-			return err
+	{
+		// Read size little endian
+		var size uint32
+		if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
+			return fmt.Errorf("cannot read array size for MenuEntries: %s", err)
+		}
+		m.MenuEntries = make([]MenuEntry, int(size))
+		for i := 0; i < int(size); i++ {
+			if err = ros.DeserializeMessageField(r, "MenuEntry", &m.MenuEntries[i]); err != nil {
+				return err
+			}
 		}
 	}
 
 	// Controls
-	// Read size little endian
-	var size uint32
-	if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
-		return fmt.Errorf("cannot read array size for Controls: %s", err)
-	}
-	m.Controls = make([]InteractiveMarkerControl, int(size))
-	for i := 0; i < int(size); i++ {
-		if err = ros.DeserializeMessageField(r, "InteractiveMarkerControl", &m.Controls[i]); err != nil {
-			return err
+	{
+		// Read size little endian
+		var size uint32
+		if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
+			return fmt.Errorf("cannot read array size for Controls: %s", err)
+		}
+		m.Controls = make([]InteractiveMarkerControl, int(size))
+		for i := 0; i < int(size); i++ {
+			if err = ros.DeserializeMessageField(r, "InteractiveMarkerControl", &m.Controls[i]); err != nil {
+				return err
+			}
 		}
 	}
 

@@ -49,10 +49,6 @@ type MeshTriangle struct {
 	VertexIndices [3]uint32
 }
 
-func (m *MeshTriangle) Type() ros.MessageType {
-	return MsgMeshTriangle
-}
-
 func (m *MeshTriangle) Serialize(w io.Writer) (err error) {
 	// Write size little endian
 	err = binary.Write(w, binary.LittleEndian, uint32(len(m.VertexIndices)))
@@ -70,17 +66,19 @@ func (m *MeshTriangle) Serialize(w io.Writer) (err error) {
 
 func (m *MeshTriangle) Deserialize(r io.Reader) (err error) {
 	// VertexIndices
-	// Read size little endian
-	var size uint32
-	if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
-		return fmt.Errorf("cannot read array size for VertexIndices: %s", err)
-	}
-	if size > 3 {
-		return fmt.Errorf("array size for VertexIndices too large: expected=3, got=%d", size)
-	}
-	for i := 0; i < int(size); i++ {
-		if err = ros.DeserializeMessageField(r, "uint32", &m.VertexIndices[i]); err != nil {
-			return err
+	{
+		// Read size little endian
+		var size uint32
+		if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
+			return fmt.Errorf("cannot read array size for VertexIndices: %s", err)
+		}
+		if size > 3 {
+			return fmt.Errorf("array size for VertexIndices too large: expected=3, got=%d", size)
+		}
+		for i := 0; i < int(size); i++ {
+			if err = ros.DeserializeMessageField(r, "uint32", &m.VertexIndices[i]); err != nil {
+				return err
+			}
 		}
 	}
 

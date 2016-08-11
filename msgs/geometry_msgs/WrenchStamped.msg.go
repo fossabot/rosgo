@@ -50,10 +50,6 @@ type WrenchStamped struct {
 	Wrench Wrench
 }
 
-func (m *WrenchStamped) Type() ros.MessageType {
-	return MsgWrenchStamped
-}
-
 func (m *WrenchStamped) Serialize(w io.Writer) (err error) {
 	if err = ros.SerializeMessageField(w, "Header", &m.Header); err != nil {
 		return err

@@ -62,10 +62,6 @@ type Header struct {
 	FrameID string
 }
 
-func (m *Header) Type() ros.MessageType {
-	return MsgHeader
-}
-
 func (m *Header) Serialize(w io.Writer) (err error) {
 	if err = ros.SerializeMessageField(w, "uint32", &m.Seq); err != nil {
 		return err

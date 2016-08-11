@@ -46,10 +46,6 @@ type Int16 struct {
 	Data int16
 }
 
-func (m *Int16) Type() ros.MessageType {
-	return MsgInt16
-}
-
 func (m *Int16) Serialize(w io.Writer) (err error) {
 	if err = ros.SerializeMessageField(w, "int16", &m.Data); err != nil {
 		return err

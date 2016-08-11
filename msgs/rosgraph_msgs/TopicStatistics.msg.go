@@ -90,10 +90,6 @@ type TopicStatistics struct {
 	StampAgeMax    ros.Duration
 }
 
-func (m *TopicStatistics) Type() ros.MessageType {
-	return MsgTopicStatistics
-}
-
 func (m *TopicStatistics) Serialize(w io.Writer) (err error) {
 	if err = ros.SerializeMessageField(w, "string", &m.Topic); err != nil {
 		return err

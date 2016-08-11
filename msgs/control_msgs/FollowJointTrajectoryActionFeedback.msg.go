@@ -7,6 +7,7 @@ import (
 	"io"
 
 	"github.com/ppg/rosgo/ros"
+	"github.com/ppg/rosgo/msgs/actionlib_msgs"
 	"github.com/ppg/rosgo/msgs/std_msgs"
 )
 
@@ -51,10 +52,6 @@ type FollowJointTrajectoryActionFeedback struct {
 	Header   std_msgs.Header
 	Status   actionlib_msgs.GoalStatus
 	Feedback FollowJointTrajectoryFeedback
-}
-
-func (m *FollowJointTrajectoryActionFeedback) Type() ros.MessageType {
-	return MsgFollowJointTrajectoryActionFeedback
 }
 
 func (m *FollowJointTrajectoryActionFeedback) Serialize(w io.Writer) (err error) {

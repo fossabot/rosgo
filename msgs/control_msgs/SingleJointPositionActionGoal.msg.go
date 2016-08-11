@@ -7,6 +7,7 @@ import (
 	"io"
 
 	"github.com/ppg/rosgo/ros"
+	"github.com/ppg/rosgo/msgs/actionlib_msgs"
 	"github.com/ppg/rosgo/msgs/std_msgs"
 )
 
@@ -51,10 +52,6 @@ type SingleJointPositionActionGoal struct {
 	Header std_msgs.Header
 	GoalID actionlib_msgs.GoalID
 	Goal   SingleJointPositionGoal
-}
-
-func (m *SingleJointPositionActionGoal) Type() ros.MessageType {
-	return MsgSingleJointPositionActionGoal
 }
 
 func (m *SingleJointPositionActionGoal) Serialize(w io.Writer) (err error) {

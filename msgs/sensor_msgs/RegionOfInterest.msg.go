@@ -68,10 +68,6 @@ type RegionOfInterest struct {
 	DoRectify bool
 }
 
-func (m *RegionOfInterest) Type() ros.MessageType {
-	return MsgRegionOfInterest
-}
-
 func (m *RegionOfInterest) Serialize(w io.Writer) (err error) {
 	if err = ros.SerializeMessageField(w, "uint32", &m.XOffset); err != nil {
 		return err

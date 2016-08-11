@@ -7,6 +7,7 @@ import (
 	"io"
 
 	"github.com/ppg/rosgo/ros"
+	"github.com/ppg/rosgo/msgs/nav_msgs"
 )
 
 type _MsgProjectedMap struct {
@@ -47,10 +48,6 @@ type ProjectedMap struct {
 	Map  nav_msgs.OccupancyGrid
 	MinZ float64
 	MaxZ float64
-}
-
-func (m *ProjectedMap) Type() ros.MessageType {
-	return MsgProjectedMap
 }
 
 func (m *ProjectedMap) Serialize(w io.Writer) (err error) {

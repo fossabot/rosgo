@@ -57,10 +57,6 @@ type ProjectedMapInfo struct {
 	MaxZ    float64
 }
 
-func (m *ProjectedMapInfo) Type() ros.MessageType {
-	return MsgProjectedMapInfo
-}
-
 func (m *ProjectedMapInfo) Serialize(w io.Writer) (err error) {
 	if err = ros.SerializeMessageField(w, "string", &m.FrameID); err != nil {
 		return err

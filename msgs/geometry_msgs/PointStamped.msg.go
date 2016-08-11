@@ -50,10 +50,6 @@ type PointStamped struct {
 	Point  Point
 }
 
-func (m *PointStamped) Type() ros.MessageType {
-	return MsgPointStamped
-}
-
 func (m *PointStamped) Serialize(w io.Writer) (err error) {
 	if err = ros.SerializeMessageField(w, "Header", &m.Header); err != nil {
 		return err

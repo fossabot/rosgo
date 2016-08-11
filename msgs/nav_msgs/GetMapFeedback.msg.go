@@ -46,10 +46,6 @@ var (
 type GetMapFeedback struct {
 }
 
-func (m *GetMapFeedback) Type() ros.MessageType {
-	return MsgGetMapFeedback
-}
-
 func (m *GetMapFeedback) Serialize(w io.Writer) (err error) {
 	return
 }
