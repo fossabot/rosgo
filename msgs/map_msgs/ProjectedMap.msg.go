@@ -6,8 +6,8 @@ package map_msgs
 import (
 	"io"
 
-	"github.com/ppg/rosgo/ros"
 	"github.com/ppg/rosgo/msgs/nav_msgs"
+	"github.com/ppg/rosgo/ros"
 )
 
 type _MsgProjectedMap struct {

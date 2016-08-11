@@ -4,12 +4,12 @@
 package tf2_msgs
 
 import (
-	"io"
 	"encoding/binary"
 	"fmt"
+	"io"
 
-	"github.com/ppg/rosgo/ros"
 	"github.com/ppg/rosgo/msgs/geometry_msgs"
+	"github.com/ppg/rosgo/ros"
 )
 
 type _MsgTFMessage struct {

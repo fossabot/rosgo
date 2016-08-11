@@ -4,9 +4,9 @@
 package shape_msgs
 
 import (
-	"io"
 	"encoding/binary"
 	"fmt"
+	"io"
 
 	"github.com/ppg/rosgo/ros"
 )

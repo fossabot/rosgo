@@ -6,8 +6,8 @@ package control_msgs
 import (
 	"io"
 
-	"github.com/ppg/rosgo/ros"
 	"github.com/ppg/rosgo/msgs/std_msgs"
+	"github.com/ppg/rosgo/ros"
 )
 
 type _MsgJointControllerState struct {

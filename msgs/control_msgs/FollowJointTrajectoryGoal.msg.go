@@ -4,12 +4,12 @@
 package control_msgs
 
 import (
-	"io"
 	"encoding/binary"
 	"fmt"
+	"io"
 
-	"github.com/ppg/rosgo/ros"
 	"github.com/ppg/rosgo/msgs/trajectory_msgs"
+	"github.com/ppg/rosgo/ros"
 )
 
 type _MsgFollowJointTrajectoryGoal struct {
