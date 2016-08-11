@@ -6,12 +6,11 @@ go:
 
 before_install:
   - go get github.com/golang/lint/golint
-#  - go get github.com/axw/gocov/gocov
-#  - go get github.com/mattn/goveralls
-#  - go get golang.org/x/tools/cmd/cover
+  - go get github.com/mattn/goveralls
+  - go get golang.org/x/tools/cmd/cover
 
 script:
   # Enable once we scrub the code to fix lint errors
   #- 'golint ./...'
-  - 'go tool vet -test .'
-  - 'go test -v -race ./...'
+  - go tool vet -test .
+  - scripts/coverage --coveralls

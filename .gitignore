@@ -1,1 +1,11 @@
+.cover/
+
 ros-gen-go/ros-gen-go
+
+# Ignore example built files
+examples/test_client/test_client
+examples/test_listener/test_listener
+examples/test_listener_with_event/test_listener_with_event
+examples/test_param/test_param
+examples/test_talker/test_talker
+examples/test_talker_with_callbacks/test_talker_with_callbacks
