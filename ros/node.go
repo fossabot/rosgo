@@ -374,9 +374,12 @@ func (node *defaultNode) SetParam(key string, value interface{}) error {
 }
 
 func (node *defaultNode) HasParam(key string) (bool, error) {
-	result, e := callRosApi(node.masterUri, "hasParam", node.qualifiedName, key)
+	result, err := callRosApi(node.masterUri, "hasParam", node.qualifiedName, key)
+	if err != nil {
+		return false, err
+	}
 	hasParam := result.(bool)
-	return hasParam, e
+	return hasParam, nil
 }
 
 func (node *defaultNode) SearchParam(key string) (string, error) {

@@ -122,14 +122,16 @@ func main() {
 	var spec interface{}
 	switch templateType {
 	case "msg":
-		msgSpec, err := parseMsgSpec(fileInfo.PackageName, fileInfo.Name, data)
+		var msgSpec *MsgSpec
+		msgSpec, err = parseMsgSpec(fileInfo.PackageName, fileInfo.Name, data)
 		if err != nil {
 			log.Fatalf("failed to parse %s spec: %s", templateType, err)
 		}
 		spec = msgSpec
 
 	case "srv":
-		srvSpec, err := parseSrvSpec(fileInfo.PackageName, fileInfo.Name, data)
+		var srvSpec *SrvSpec
+		srvSpec, err = parseSrvSpec(fileInfo.PackageName, fileInfo.Name, data)
 		if err != nil {
 			log.Fatalf("failed to parse %s spec: %s", templateType, err)
 		}
