@@ -30,7 +30,7 @@ func (t *_SrvSetBool) NewService() ros.Service {
 var (
 	SrvSetBool = &_SrvSetBool{
 		"std_srvs/SetBool",
-		"7bb02fb16e68acd390fed8db19d8bb98",
+		"e3669e693e08eccee0f27d72171188a9",
 		`bool data # e.g. for hardware enabling / disabling
 ---
 bool success   # indicate successful run of triggered service

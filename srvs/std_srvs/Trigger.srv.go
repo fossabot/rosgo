@@ -30,7 +30,7 @@ func (t *_SrvTrigger) NewService() ros.Service {
 var (
 	SrvTrigger = &_SrvTrigger{
 		"std_srvs/Trigger",
-		"23f33d6316acaeae6787ff486f628ac0",
+		"d41d8cd98f00b204e9800998ecf8427e",
 		`---
 bool success   # indicate successful run of triggered service
 string message # informational, e.g. for error messages

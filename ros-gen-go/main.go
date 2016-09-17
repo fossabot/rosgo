@@ -463,6 +463,11 @@ func parseSrvSpec(packageName, name string, data []byte) (*SrvSpec, error) {
 		spec.packageMap[k] = struct{}{}
 	}
 
+	log.Printf("spec.MD5Sum: %s", spec.MD5Sum)
+	log.Printf("spec.RequestSpec.MD5Sum: %s", spec.RequestSpec.MD5Sum)
+	// FIXME(ppg): why does it expect the srv spec to have the MD5 sum of the request (and maybe response) instead of its md5sum?
+	spec.MD5Sum = spec.RequestSpec.MD5Sum
+
 	return spec, nil
 }
 

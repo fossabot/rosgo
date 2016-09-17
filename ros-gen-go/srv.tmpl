@@ -36,8 +36,8 @@ func (t *_Srv{{ .Spec.Name }}) NewService() ros.Service {
 var (
   Srv{{ .Spec.Name }} = &_Srv{{ .Spec.Name }} {
 		"{{ .FileInfo.PackageName }}/{{ .Spec.Name }}",
-    "{{ .FileInfo.MD5Sum }}",
-    `{{ .FileInfo.Raw }}`,
+    "{{ .Spec.MD5Sum }}",
+    `{{ .Spec.Raw }}`,
     Msg{{ .Spec.Name }}Request,
     Msg{{ .Spec.Name }}Response,
   }

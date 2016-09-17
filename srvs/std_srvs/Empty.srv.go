@@ -30,7 +30,7 @@ func (t *_SrvEmpty) NewService() ros.Service {
 var (
 	SrvEmpty = &_SrvEmpty{
 		"std_srvs/Empty",
-		"9efc314b65237d5d646e1b817372afc6",
+		"d41d8cd98f00b204e9800998ecf8427e",
 		`---`,
 		MsgEmptyRequest,
 		MsgEmptyResponse,
