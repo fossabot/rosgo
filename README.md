@@ -1,6 +1,7 @@
 # rosgo
 [![Build Status](https://travis-ci.org/ppg/rosgo.svg?branch=master)](https://travis-ci.org/ppg/rosgo)
 [![Coverage Status](https://coveralls.io/repos/github/ppg/rosgo/badge.svg?branch=master)](https://coveralls.io/github/ppg/rosgo?branch=master)
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fppg%2Frosgo.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fppg%2Frosgo?ref=badge_shield)
 
 Package Summary
 ---------------------------------
@@ -49,3 +50,7 @@ See also
 ---------------------------------
 
 - [rosgo in ROS Wiki](http://www.ros.org/wiki/rosgo)
+
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fppg%2Frosgo.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fppg%2Frosgo?ref=badge_large)
